@@ -1,10 +1,21 @@
 <template>
-  <h1>我是home</h1>
+  <div>
+      <Title/>
+      <search/>
+  </div>
 </template>
 
 <script>
-export default {
 
+import Title from '../components/title.vue'
+import search from '../components/search.vue'
+
+
+export default {
+    components: {
+        Title,
+        search
+    }
 }
 </script>
 

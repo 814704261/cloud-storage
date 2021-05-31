@@ -22,7 +22,6 @@ export default {
   },
   methods: {
     skip(url){
-      console.log(url)
       this.$router.replace(url)
     }
   },
@@ -34,5 +33,10 @@ export default {
 
 
 <style>
-  @import url("//at.alicdn.com/t/font_2582268_hm4guwzuk9.css");
+  @import url("//at.alicdn.com/t/font_2582268_ik6a5pzsy2g.css");
+  @import url("./assets/css/normalize.css");
+
+  body{
+    background-color: #cccccc;
+  }
 </style>
