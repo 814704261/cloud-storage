@@ -12,6 +12,19 @@ export default new Vuex.Store({
             state.fileTree = payload
         }
     },
+    getters: {
+        getFileTree(state, getters) {
+            let tree = state.fileTree
+            let children = state.fileTree.children.sort((a, b) => {
+                if (a.type == 'file') {
+                    return 1
+                }
+                return -1
+            })
+            tree.children = children
+            return tree
+        }
+    },
     actions: {},
     modules: {}
 })

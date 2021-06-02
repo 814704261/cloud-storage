@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="home">
       <hometitle/>
       <search/>
       <router-view></router-view>
@@ -10,6 +10,7 @@
 
 import hometitle from '../components/title.vue'
 import search from '../components/search.vue'
+
 import axios from 'axios'
 
 export default {
@@ -33,11 +34,13 @@ export default {
     },
     components: {
         hometitle,
-        search
+        search,
     }
 }
 </script>
 
 <style scope>
+
+
 
 </style>
