@@ -4,12 +4,14 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
+    state: {
+        fileTree: {}
+    },
+    mutations: {
+        setFileTree(state, payload) {
+            state.fileTree = payload
+        }
+    },
+    actions: {},
+    modules: {}
 })

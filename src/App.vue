@@ -5,13 +5,12 @@
       <router-view/>
     </keep-alive>
 
-    <buttom-tab class="buttomTab" v-on:goto="skip"></buttom-tab>
   </div>
 </template>
 
 
 <script>
-import buttomTab from './components/buttomTab.vue'
+
 
 export default {
   name: 'App',
@@ -20,14 +19,13 @@ export default {
       
     }
   },
-  methods: {
-    skip(url){
-      this.$router.replace(url)
+  created() {
+    if(localStorage.getItem('login')){
+      this.$router.replace('/')
+    }else{
+      this.$router.replace('/register')
     }
   },
-  components: {
-    buttomTab
-  }
 }
 </script>
 
