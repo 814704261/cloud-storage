@@ -5,7 +5,7 @@
           <img v-else src="../assets/image/fileicon.webp">
       </div>
       <div class="filename">
-          <span>{{file.name || file.title}}</span>
+          <span>{{file.name}}</span>
           <span>{{file.ctime}}</span>
       </div>
       <div class="operation" @click.stop="selecte">
@@ -16,7 +16,7 @@
 
 <script>
 export default {
-    props:['file'],
+    props:['file', 'filestyle', 'selecteallstyle'],
     data() {
         return {
             sele: false
@@ -35,6 +35,14 @@ export default {
             this.$emit('selected', this.file)
         }
     },
+    watch:{
+        filestyle(val){
+            this.sele = false
+        },
+        selecteallstyle(){
+            this.sele = true
+        }
+    }
 }
 </script>
 
@@ -49,6 +57,11 @@ export default {
     align-items: center;
     background-color: white;
 }
+
+.file > div {
+    flex-shrink: 0;
+}
+
 .file-on{
     background-color: pink;
 }

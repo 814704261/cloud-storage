@@ -29,7 +29,7 @@ function getFileTree(level, dir) {
         var stateDir = fs.statSync(dir)
         var result = { //构造文件夹数据
             path: dir,
-            title: path.basename(dir),
+            name: path.basename(dir),
             type: 'directory',
             mtime: stateDir.mtime,
             ctime: stateDir.ctime,

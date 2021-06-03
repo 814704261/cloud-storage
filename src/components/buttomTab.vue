@@ -48,7 +48,7 @@ export default {
         justify-content: space-around;
         align-items: center;
         position: fixed;
-        bottom: 0;
+        bottom: -1px;
         background-color: white;
         box-shadow: 0 5px 5px #888888;
     }

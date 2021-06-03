@@ -1,5 +1,5 @@
 <template>
-  <li class="pathName" @click="clickpath">{{file.title}}</li>
+  <li class="pathName" @click="clickpath">{{file.name}}</li>
 </template>
 
 <script>

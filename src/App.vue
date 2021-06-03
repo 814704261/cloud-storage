@@ -31,7 +31,7 @@ export default {
 
 
 <style>
-  @import url("//at.alicdn.com/t/font_2582268_ik6a5pzsy2g.css");
+  @import url("//at.alicdn.com/t/font_2582268_v30nyo8d5ti.css");
   @import url("./assets/css/normalize.css");
 
   body{
