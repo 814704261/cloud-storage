@@ -23,7 +23,7 @@ export default {
     if(localStorage.getItem('login')){
       this.$router.replace('/')
     }else{
-      this.$router.replace('/register')
+      this.$router.replace('/login')
     }
   },
 }
@@ -36,5 +36,10 @@ export default {
 
   body{
     background-color: #cccccc;
+  }
+
+  #app{
+    width: 100%;
+    height: 100%;
   }
 </style>
