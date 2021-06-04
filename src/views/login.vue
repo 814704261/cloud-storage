@@ -45,7 +45,16 @@ export default {
                     verification: this.formData.verification
                 }
             }).then((result)=>{
-                console.log(result)
+                
+                if(result.data.succeed){
+                    localStorage.setItem('account', this.formData.account)
+                    this.$store.commit('setAccount', this.formData.account)
+                    this.$router.replace('/')
+                }else{
+                    alert(result.data.msg)
+                }
+
+
             }).catch(err => {
                 throw new Error(err)
             })

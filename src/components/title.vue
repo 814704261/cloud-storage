@@ -1,8 +1,13 @@
 <template>
   <div class="title">
       <div>周少的网盘</div>
-      <div>
-          <span class="icon-shangchuan iconfont"></span>
+      <div class="tools">
+          <div>
+              <span class="icon-shangchuan iconfont"></span>
+          </div>
+          <div>
+              <span class="icon-jia-tianchong iconfont"></span>
+          </div>
       </div>
   </div>
 </template>
@@ -31,13 +36,18 @@ export default {
         font-weight: 600;
     }
 
-    .title > div:nth-child(2){
-        width: 35px;
-        height: 35px;
+    .tools{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tools > div{
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         text-align: center;
-        line-height: 35px;
-        font-size: 22px !important;
+        font-size: 26px !important;
         color: white;
         font-weight: 600;
         background-color: #c0c0c0;

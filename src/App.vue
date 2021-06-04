@@ -20,7 +20,7 @@ export default {
     }
   },
   created() {
-    if(localStorage.getItem('login')){
+    if(localStorage.getItem('account')){
       this.$router.replace('/')
     }else{
       this.$router.replace('/login')
@@ -31,7 +31,7 @@ export default {
 
 
 <style>
-  @import url("//at.alicdn.com/t/font_2582268_v30nyo8d5ti.css");
+  @import url("//at.alicdn.com/t/font_2582268_yv207japuy.css");
   @import url("./assets/css/normalize.css");
 
   body{

@@ -5,11 +5,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        fileTree: {}
+        fileTree: {},
+        account: ''
     },
     mutations: {
         setFileTree(state, payload) {
             state.fileTree = payload
+        },
+        setAccount(state, payload) {
+            state.account = payload
         }
     },
     getters: {
