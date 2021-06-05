@@ -7,7 +7,7 @@ const verificationModel = require('./DataBase/verification')
 const sendEmail = require('./util/sendEmail')
 const fs = require('fs')
 const path = require('path')
-
+const tar = require('tar')
 
 // 用户获取文件路由
 app.get('/files', (req, res) => {
@@ -168,6 +168,23 @@ app.get('/createdir', (req, res) => {
     })
 
 
+})
+
+const TARCWD = path.resolve(__dirname, 'USERDIR') //打包文件的根目录
+
+//用户下载文件路由
+app.get('/download', (req, res) => {
+
+    res.set({
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': 'attachment;filename=download.tar.gzip'
+    })
+    let { filepaths } = req.query
+    tar.c({
+        gzip: true,
+        cwd: TARCWD
+    }, filepaths).pipe(res)
 })
 
 app.listen(1234, () => {

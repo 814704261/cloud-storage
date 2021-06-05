@@ -28,7 +28,7 @@
       </div>
 
       <div class="operate-bottom" v-if="selectedFiles.length != 0">
-          <div>
+          <div @click="download">
               <span class="iconfont icon-icon-"></span>
               <span>下载</span>
           </div>
@@ -125,6 +125,28 @@ export default {
                 this.$store.commit('changeFileTree', result.data.files[0])
             }).catch(err => {
                 alert(err)
+            })
+        },
+        download(){     // 下载文件
+            let filepaths = []
+            for(let file of this.selectedFiles){
+                filepaths.push(file.path.split('\\USERDIR\\')[1])
+            }
+            axios('http://localhost:1234/download', {
+                params: {
+                    filepaths
+                },
+                responseType:'blob',
+            })
+            .then((result)=>{
+                let a = document.createElement('a')
+                a.style.display = 'none'
+                a.href = URL.createObjectURL(result.data)
+                a.download = 'download.tar.gz'
+                document.body.appendChild(a)
+                a.click()
+                document.body.removeChild(a)
+                this.cancelSelecte()
             })
         }
     },
