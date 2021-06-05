@@ -13,7 +13,7 @@ export default new Vuex.Store({
             state.fileTree = payload
         },
         changeFileTree(state, payload) {
-            console.log(payload)
+
             if (state.fileTree.path == payload.path) {
                 return state.fileTree.children = payload.children
             }

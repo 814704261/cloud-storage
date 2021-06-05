@@ -8,9 +8,9 @@ const database = require('../DataBase/database')
 const accountModel = require('../DataBase/accountSchema')
 const verificationModel = require('../DataBase/verification')
 const sendEmail = require('../util/sendEmail')
-const { createDir } = require('../util/util')
+const { createDir, deleteFile } = require('../util/util')
 
-
+const TARCWD = path.resolve(__dirname, '../USERDIR') // 用户下载打包文件的目录
 
 
 //用户登录路由
@@ -145,8 +145,8 @@ router.get('/getverification', (req, res) => {
     })
 })
 
-const TARCWD = path.resolve(__dirname, '../USERDIR') //打包文件的根目录
-    //用户下载文件路由
+
+//用户下载文件路由
 router.get('/download', (req, res) => {
 
     res.set({
@@ -167,7 +167,6 @@ router.get('/createdir', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
 
     let { context, name } = req.query
-    console.log(context, name)
     createDir(path.resolve(context, name)).then((result) => {
             res.send({
                 succeed: true,
@@ -185,5 +184,20 @@ router.get('/createdir', (req, res) => {
         })
 })
 
-
+router.get('/deletefile', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*')
+    let { context, filepaths } = req.query
+    deleteFile(filepaths).then(result => {
+        res.send({
+            succeed: true,
+            files: getFileTree(0, context),
+            msg: null
+        })
+    }).catch(err => {
+        res.send({
+            succeed: false,
+            msg: err
+        })
+    })
+})
 module.exports = router

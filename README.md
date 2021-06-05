@@ -1,5 +1,9 @@
 # cloud-storage
 
+## Operating environment requirements
+database: mongodb
+runtime: node.js
+
 ## Project setup
 ```
 npm install

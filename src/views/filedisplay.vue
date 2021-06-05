@@ -37,7 +37,7 @@
               <span>分享</span>
           </div>
           <div>
-              <span class="iconfont icon-shanchu"></span>
+              <span class="iconfont icon-shanchu" @click="deletefile"></span>
               <span>删除</span>
           </div>
           <div>
@@ -49,6 +49,12 @@
               <span>移动</span>
           </div>
       </div>
+
+      <popup 
+      :time="popupShowTime"
+      :text="popupText"
+      :title="popupTitle"
+      :show="popupShow"/>
   </div>
 </template>
 
@@ -57,6 +63,8 @@ import filesComp from '../components/file'
 import pathBar from '../components/pathBar.vue'
 import hometitle from '../components/title.vue'
 import search from '../components/search.vue'
+import popup from '../components/popup.vue'
+
 
 import axios from 'axios'
 
@@ -68,10 +76,20 @@ export default {
             selectedFiles: [],  //用户选择的文件
             pathDir: [],
             filestyle: true,
-            selecteAllStyle: true
+            selecteAllStyle: true,
+            popupShow: Boolean,      //弹窗是否显示
+            popupShowTime: 3000,   //弹窗显示的时间
+            popupTitle: '', // 弹窗的标题
+            popupText: ''   // 弹窗内容
         }
     },
     methods: {
+        popup(title, text, time=3000){      //显示弹窗
+            this.popupTitle = title
+            this.popupText = text
+            this.popupShowTime = time
+            this.popupShow = !this.popupShow
+        },
         into(data){     // 点击了目录
             // 如果正在操作文件就禁止进入目录
             if(this.selectedFiles.length != 0) return 
@@ -83,7 +101,7 @@ export default {
             // 如果正在操作文件就禁止点击文件
             if(this.selectedFiles.length != 0) return
 
-            console.log('点击文件了')
+            console.log('点击文件了', data)
         },
         selected(data){     // 选择文件
             for(let i = 0; i < this.selectedFiles.length; i++){
@@ -110,17 +128,19 @@ export default {
         },
         createDir(){        // 用户创建文件夹
             let nameDir = window.prompt('输入文件夹名字')
+            if(!nameDir || !nameDir.trim()) return
+
             axios.get('http://localhost:1234/createdir',{
                 params: {
                     context: this.files.path,
                     name: nameDir
                 }
             }).then((result)=>{
-                if(!result.data.succeed) return alert(result.data.msg)
+                this.popup('靓仔牛逼', '创建文件成功')
                 this.files = result.data.files[0]
                 this.$store.commit('changeFileTree', result.data.files[0])
             }).catch(err => {
-                console.log(err)
+                this.popup('卧槽！创建失败了', err)
                 alert(err)
             })
         },
@@ -129,21 +149,50 @@ export default {
             for(let file of this.selectedFiles){
                 filepaths.push(file.path.split('\\USERDIR\\')[1])
             }
+            
+            this.cancelSelecte()
+            popup('正在下载','已添加到下载任务')
+
             axios('http://localhost:1234/download', {
                 params: {
                     filepaths
                 },
                 responseType:'blob',
+                onDownloadProgress(evt){
+                    console.log(evt)
+                }
             })
             .then((result)=>{
                 let a = document.createElement('a')
                 a.style.display = 'none'
                 a.href = URL.createObjectURL(result.data)
-                a.download = 'download.tar.gz'
+                a.download = this.files.name + '.tar.gz'
                 document.body.appendChild(a)
                 a.click()
                 document.body.removeChild(a)
+            }).catch(err => {
+                popup('错误提示',err)
+                throw new Error(err)
+            })
+        },
+        deletefile(){   // 删除文件
+            let filepaths = []
+            for(let file of this.selectedFiles){
+                filepaths.push(file.path)
+            }
+            axios('http://localhost:1234/deletefile', {
+                params: {
+                    filepaths,
+                    context: this.files.path,
+                }
+            }).then(result => {
+                this.popup('删除成功', '靓仔牛逼')
                 this.cancelSelecte()
+                this.files = result.data.files[0]
+                this.$store.commit('changeFileTree', result.data.files[0])
+            }).catch(err => {
+                this.popup('错误', err)
+                throw new Error(err)
             })
         }
     },
@@ -166,7 +215,8 @@ export default {
         filesComp,
         pathBar,
         hometitle,
-        search
+        search,
+        popup
     }
 }
 </script>

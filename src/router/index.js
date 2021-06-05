@@ -7,8 +7,6 @@ let Profile = () =>
     import ('../views/profile.vue')
 let Main = () =>
     import ('../views/main.vue')
-let Register = () =>
-    import ('../views/register.vue')
 let Login = () =>
     import ('../views/login.vue')
 let Filedisplay = () =>
@@ -44,11 +42,6 @@ const routes = [{
                 component: Profile
             }
         ]
-    },
-    {
-        path: '/register',
-        name: 'Register',
-        component: Register
     },
     {
         path: '/login',

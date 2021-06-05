@@ -34,12 +34,6 @@ export default {
   @import url("//at.alicdn.com/t/font_2582268_yv207japuy.css");
   @import url("./assets/css/normalize.css");
 
-  body{
-    background-color: #cccccc;
-  }
 
-  #app{
-    width: 100%;
-    height: 100%;
-  }
+
 </style>
