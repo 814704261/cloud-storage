@@ -1,15 +1,11 @@
 <template>
   <div class="home">
-      <hometitle/>
-      <search/>
       <router-view></router-view>
   </div>
 </template>
 
 <script>
 
-import hometitle from '../components/title.vue'
-import search from '../components/search.vue'
 
 import axios from 'axios'
 
@@ -37,8 +33,7 @@ export default {
         })
     },
     components: {
-        hometitle,
-        search,
+        
     }
 }
 </script>

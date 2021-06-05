@@ -149,10 +149,25 @@ app.get('/getverification', (req, res) => {
 // 用户创建文件夹路由
 app.get('/createdir', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
-    console.log(req.query)
-    res.send({
-        data: req.query
+
+    let { context, name } = req.query
+
+    createDir(path.resolve(context, name)).then((result) => {
+        res.send({
+            succeed: true,
+            files: getFileTree(0, context),
+            msg: null
+        })
+    }).catch((err) => {
+        res.send({
+            succeed: false,
+            files: null,
+            msg: '服务器错误，请联系开发者(file already exists)'
+        })
+        throw new Error(err)
     })
+
+
 })
 
 app.listen(1234, () => {

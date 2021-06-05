@@ -1,6 +1,8 @@
 <template>
   <div class="filedisplay">
-      <ol class="pathBar">
+      <hometitle @createdir="createDir"/>
+      <search/>
+      <ol class="pathBar" ref="pathBar">
           <path-bar 
           :class="{last: index == pathDir.length - 1}"
           :file="value"
@@ -53,12 +55,17 @@
 <script>
 import filesComp from '../components/file'
 import pathBar from '../components/pathBar.vue'
+import hometitle from '../components/title.vue'
+import search from '../components/search.vue'
+
+import axios from 'axios'
+
 
 export default {
     data() {
         return {
             files: {}, // 当前的树结构
-            selectedFiles: [],
+            selectedFiles: [],  //用户选择的文件
             pathDir: [],
             filestyle: true,
             selecteAllStyle: true
@@ -100,6 +107,25 @@ export default {
             this.selectedFiles.splice(0)
             this.selectedFiles.push(...this.files.children)
             this.selecteAllStyle = !this.selecteAllStyle
+        },
+        createDir(){        // 用户创建文件夹
+            console.log('用户创建文件夹')
+            let nameDir = window.prompt('输入文件夹名字')
+            console.log(nameDir)
+            axios.get('http://localhost:1234/createdir',{
+                params: {
+                    context: this.files.path,
+                    name: nameDir
+                }
+            }).then((result)=>{
+                console.log(result.data.files[0])
+                if(!result.data.succeed) return alert(result.data.msg)
+
+                this.files = result.data.files[0]
+                this.$store.commit('changeFileTree', result.data.files[0])
+            }).catch(err => {
+                alert(err)
+            })
         }
     },
     created() {
@@ -119,7 +145,9 @@ export default {
     },
     components:{
         filesComp,
-        pathBar
+        pathBar,
+        hometitle,
+        search
     }
 }
 </script>

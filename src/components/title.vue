@@ -1,11 +1,11 @@
 <template>
-  <div class="title">
+  <div class="hometitle">
       <div>周少的网盘</div>
       <div class="tools">
           <div>
               <span class="icon-shangchuan iconfont"></span>
           </div>
-          <div>
+          <div @click="createDir">
               <span class="icon-jia-tianchong iconfont"></span>
           </div>
       </div>
@@ -14,12 +14,16 @@
 
 <script>
 export default {
-
+    methods: {
+        createDir(){
+            this.$emit('createdir')
+        }
+    },
 }
 </script>
 
 <style scope>
-    .title{
+    .hometitle{
         position: sticky;
         top: 0;
         padding: 0 20px;
@@ -30,7 +34,7 @@ export default {
         align-items: center;
     }
 
-    .title > div:nth-child(1){
+    .hometitle > div:nth-child(1){
         line-height: 50px;
         font-size: 20px;
         font-weight: 600;
@@ -45,11 +49,13 @@ export default {
     .tools > div{
         width: 30px;
         height: 30px;
+        margin: 0 5px;
         border-radius: 50%;
         text-align: center;
         font-size: 26px !important;
         color: white;
         font-weight: 600;
+        line-height: 22px;
         background-color: #c0c0c0;
     }
 </style>
