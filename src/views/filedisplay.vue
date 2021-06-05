@@ -79,7 +79,7 @@ export default {
             this.files = data
             this.pathDir.push(data)
         },
-        clickfile(data){
+        clickfile(data){    //用户点击了文件，进入预览页面
             // 如果正在操作文件就禁止点击文件
             if(this.selectedFiles.length != 0) return
 
@@ -109,21 +109,18 @@ export default {
             this.selecteAllStyle = !this.selecteAllStyle
         },
         createDir(){        // 用户创建文件夹
-            console.log('用户创建文件夹')
             let nameDir = window.prompt('输入文件夹名字')
-            console.log(nameDir)
             axios.get('http://localhost:1234/createdir',{
                 params: {
                     context: this.files.path,
                     name: nameDir
                 }
             }).then((result)=>{
-                console.log(result.data.files[0])
                 if(!result.data.succeed) return alert(result.data.msg)
-
                 this.files = result.data.files[0]
                 this.$store.commit('changeFileTree', result.data.files[0])
             }).catch(err => {
+                console.log(err)
                 alert(err)
             })
         },
