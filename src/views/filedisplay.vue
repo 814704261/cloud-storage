@@ -151,7 +151,7 @@ export default {
             }
             
             this.cancelSelecte()
-            popup('正在下载','已添加到下载任务')
+            this.popup('正在下载','已添加到下载任务')
 
             axios('http://localhost:1234/download', {
                 params: {
@@ -171,7 +171,7 @@ export default {
                 a.click()
                 document.body.removeChild(a)
             }).catch(err => {
-                popup('错误提示',err)
+                this.popup('错误提示',err)
                 throw new Error(err)
             })
         },

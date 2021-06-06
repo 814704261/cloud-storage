@@ -11,7 +11,7 @@ const sendEmail = require('../util/sendEmail')
 const { createDir, deleteFile } = require('../util/util')
 
 const TARCWD = path.resolve(__dirname, '../USERDIR') // 用户下载打包文件的目录
-
+const USERROOTDIR = path.resolve(__dirname, '../USERDIR')
 
 //用户登录路由
 router.get('/login', (req, res) => {
@@ -60,7 +60,7 @@ router.get('/login', (req, res) => {
                         .then(resolve => {
                             // 账号创建成功， 为其创建跟目录，然后返回数据
 
-                            let rootDir = path.resolve(__dirname, './USERDIR', account)
+                            let rootDir = path.resolve(USERROOTDIR, account)
 
                             let p1 = createDir(rootDir, true)
                             let p2 = createDir(path.resolve(rootDir, '我的资源'), true)
@@ -184,6 +184,7 @@ router.get('/createdir', (req, res) => {
         })
 })
 
+// 用户删除文件路由
 router.get('/deletefile', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
     let { context, filepaths } = req.query
