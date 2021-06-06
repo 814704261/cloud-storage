@@ -6,7 +6,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         fileTree: {},
-        account: ''
+        account: '',
+        uploadQuest: [],
+        downloadQuest: []
     },
     mutations: {
         setFileTree(state, payload) {
@@ -31,6 +33,23 @@ export default new Vuex.Store({
         },
         setAccount(state, payload) {
             state.account = payload
+        },
+        setDownloadQuest(state, plaload) {
+            state.downloadQuest.push(plaload)
+        },
+        changeDownloadQuest(state, playload) {
+            for (let q of state.downloadQuest) {
+                if (q.id == playload.id) {
+                    return q = playload
+                }
+            }
+        },
+        deleteDownloadQuest(state, playload) {
+            state.downloadQuest.forEach((value, index) => {
+                if (value.id == playload.id) {
+                    return state.downloadQuest.splice(index, 1)
+                }
+            })
         }
     },
     getters: {

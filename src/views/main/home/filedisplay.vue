@@ -11,7 +11,7 @@
           :index="index"
           @changepath="changepath"/>
       </ol>
-      <files-comp 
+      <files-comp keep-alive
       v-for="(value, index) of getFiles" 
       :key="index" 
       :file="value"
@@ -59,11 +59,11 @@
 </template>
 
 <script>
-import filesComp from '../components/file'
-import pathBar from '../components/pathBar.vue'
-import hometitle from '../components/title.vue'
-import search from '../components/search.vue'
-import popup from '../components/popup.vue'
+import filesComp from 'components/file'
+import pathBar from 'components/pathBar'
+import hometitle from 'components/title'
+import search from 'components/search'
+import popup from 'components/popup'
 
 
 import axios from 'axios'
@@ -151,18 +151,33 @@ export default {
             }
             
             this.cancelSelecte()
-            this.popup('正在下载','已添加到下载任务')
+            //this.popup('正在下载','已添加到下载任务', 1000)
 
+            let quest = {
+                source: axios.CancelToken.source(),
+                total: 0,
+                loaded: 0,
+                name: this.files.name + '.tar.gz',
+                id: new Date().getTime()
+            }
+            this.$store.commit('setDownloadQuest', quest)
+            let that = this
             axios('http://localhost:1234/download', {
                 params: {
                     filepaths
                 },
                 responseType:'blob',
+                cancelToken: quest.source.token,
                 onDownloadProgress(evt){
-                    console.log(evt)
+                    quest.total = evt.total
+                    quest.loaded = evt.loaded
+                    console.log(evt.target.response)
+                    that.$store.commit('changeDownloadQuest', quest)
                 }
             })
             .then((result)=>{
+                that.$store.commit('deleteDownloadQuest', quest)
+
                 let a = document.createElement('a')
                 a.style.display = 'none'
                 a.href = URL.createObjectURL(result.data)

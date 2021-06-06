@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import buttomTab from '../components/buttomTab.vue'
+import buttomTab from 'components/buttomTab.vue'
 export default {
   created() {
     

@@ -2,17 +2,19 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 let Home = () =>
-    import ('../views/home.vue')
+    import ('views/main/home/home')
 let Profile = () =>
-    import ('../views/profile.vue')
+    import ('views/main/profile/profile')
 let Main = () =>
-    import ('../views/main.vue')
+    import ('views/main/main')
 let Login = () =>
-    import ('../views/login.vue')
+    import ('views/login/login')
 let Filedisplay = () =>
-    import ('../views/filedisplay.vue')
+    import ('views/main/home/filedisplay')
 let Loading = () =>
-    import ('../views/loading.vue')
+    import ('views/main/home/loading')
+let Quest = () =>
+    import ('views/quest/index')
 
 Vue.use(VueRouter)
 
@@ -47,6 +49,11 @@ const routes = [{
         path: '/login',
         name: 'Login',
         component: Login
+    },
+    {
+        path: '/quest',
+        name: 'Quest',
+        component: Quest
     }
 ]
 

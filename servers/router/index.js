@@ -152,7 +152,7 @@ router.get('/download', (req, res) => {
     res.set({
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/octet-stream',
-        'Content-Disposition': 'attachment;filename=download.tar.gzip'
+        'Content-Disposition': 'attachment;filename=download.tar.gz'
     })
     let { filepaths } = req.query
     tar.c({

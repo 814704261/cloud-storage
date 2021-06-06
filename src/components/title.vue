@@ -2,7 +2,7 @@
   <div class="hometitle">
       <div>周少的网盘</div>
       <div class="tools">
-          <div>
+          <div @click="quest">
               <span class="icon-shangchuan iconfont"></span>
           </div>
           <div @click="createDir">
@@ -17,6 +17,9 @@ export default {
     methods: {
         createDir(){
             this.$emit('createdir')
+        },
+        quest(){
+            this.$router.push('/quest')
         }
     },
 }
