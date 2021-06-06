@@ -60,6 +60,8 @@ export default {
     align-items: center;
     border-radius: 30px;
     overflow: hidden;
+    font-size: 20px;
+    font-weight: 600;
     background: white;
 }
 
