@@ -1,4 +1,5 @@
 const router = require('express').Router()
+<<<<<<< HEAD
 const formidable = require('formidable')
 const path = require('path')
 const fs = require('fs')
@@ -81,11 +82,29 @@ router.post('/upload', (req, res, next) => {
             succeed: false,
             msg: err
         })
+=======
+const formidable = require('formidable');
+
+
+
+router.post('/upload', (req, res) => {
+    const form = formidable({
+        multiples: true,
+        uploadDir: '', //设置文件存储的位置
+        keepExtensions: true,
+        maxFileSize: 2048 * 1024 * 1024, // 上传文件大小设置为2G
+    })
+    form.parse(req, (err, fileds, files) => {
+
+>>>>>>> 52b808384cc3e834cf5806d2e969f673e51dc354
     })
 })
 
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 52b808384cc3e834cf5806d2e969f673e51dc354
 module.exports = router

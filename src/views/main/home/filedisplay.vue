@@ -46,6 +46,7 @@
       <div>
         <span class="iconfont icon-zhongmingming"></span>
         <span>重命名</span>
+<<<<<<< HEAD
       </div>
       <div>
         <span class="iconfont icon-yidong"></span>
@@ -63,6 +64,19 @@
       />
     </div>
 
+=======
+      </div>
+      <div>
+        <span class="iconfont icon-yidong"></span>
+        <span>移动</span>
+      </div>
+    </div>
+
+    <div class="uploadFile" @click="selectFile">
+        <input type="file" multiple style="display: none;" ref="uploadFile" @change="uploadFile">
+    </div>
+
+>>>>>>> 52b808384cc3e834cf5806d2e969f673e51dc354
     <popup
       :time="popupShowTime"
       :text="popupText"
@@ -176,6 +190,7 @@ export default {
 
       this.cancelSelecte();
       //this.popup('正在下载','已添加到下载任务', 1000)
+<<<<<<< HEAD
 
       let quest = {
         source: axios.CancelToken.source(),
@@ -286,6 +301,77 @@ export default {
           throw new Error(err);
         });
     },
+=======
+
+      let quest = {
+        source: axios.CancelToken.source(),
+        total: 0,
+        loaded: 0,
+        name: this.files.name + ".tar.gz",
+        id: new Date().getTime(),
+      };
+      this.$store.commit("setDownloadQuest", quest);
+      let that = this;
+      axios("http://localhost:1234/download", {
+        params: {
+          filepaths,
+        },
+        responseType: "blob",
+        cancelToken: quest.source.token,
+        onDownloadProgress(evt) {
+          quest.total = evt.total;
+          quest.loaded = evt.loaded;
+          console.log(evt.target.response);
+          that.$store.commit("changeDownloadQuest", quest);
+        },
+      })
+        .then((result) => {
+          that.$store.commit("deleteDownloadQuest", quest);
+
+          let a = document.createElement("a");
+          a.style.display = "none";
+          a.href = URL.createObjectURL(result.data);
+          a.download = this.files.name + ".tar.gz";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        })
+        .catch((err) => {
+          this.popup("错误提示", err);
+          throw new Error(err);
+        });
+    },
+    deletefile() {
+      // 删除文件
+      let filepaths = [];
+      for (let file of this.selectedFiles) {
+        filepaths.push(file.path);
+      }
+      axios("http://localhost:1234/deletefile", {
+        params: {
+          filepaths,
+          context: this.files.path,
+        },
+      })
+        .then((result) => {
+          this.popup("删除成功", "靓仔牛逼");
+          this.cancelSelecte();
+          this.files = result.data.files[0];
+          this.$store.commit("changeFileTree", result.data.files[0]);
+        })
+        .catch((err) => {
+          this.popup("错误", err);
+          throw new Error(err);
+        });
+    },
+    selectFile(){   //用户选择上传的文件文件
+        console.log(this.$refs.uploadFile)
+        this.$refs.uploadFile.click()
+    },
+    uploadFile(){       //用户上传文件
+        console.log(this.$refs.uploadFile.files)
+    }
+>>>>>>> 52b808384cc3e834cf5806d2e969f673e51dc354
   },
   created() {
     this.files = this.$store.getters.getFileTree;
@@ -346,6 +432,7 @@ export default {
 .operate-top div:nth-child(3) {
   color: rgb(0, 142, 236);
   padding: 0 10px;
+<<<<<<< HEAD
 }
 
 .operate-top div:nth-child(2) {
@@ -365,6 +452,27 @@ export default {
   background-color: rgb(0, 174, 255);
 }
 
+=======
+}
+
+.operate-top div:nth-child(2) {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.operate-bottom {
+  width: 100%;
+  height: 60px;
+  position: fixed;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(0, 174, 255);
+}
+
+>>>>>>> 52b808384cc3e834cf5806d2e969f673e51dc354
 .operate-bottom > div {
   display: inherit;
   flex-direction: column;
@@ -379,6 +487,7 @@ export default {
   font-weight: 600;
 }
 
+<<<<<<< HEAD
 .uploadFile {
   width: 50px;
   height: 50px;
@@ -389,5 +498,17 @@ export default {
   z-index: 2;
   transform: translate(-50%, 0);
   border-radius: 30px;
+=======
+.uploadFile{
+    width: 50px;
+    height: 50px;
+    background: black;
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    z-index: 2;
+    transform: translate(-50%, 0);
+    border-radius: 30px;
+>>>>>>> 52b808384cc3e834cf5806d2e969f673e51dc354
 }
 </style>
