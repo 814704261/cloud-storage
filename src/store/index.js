@@ -5,10 +5,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        fileTree: {},
-        account: '',
-        uploadQuest: [],
-        downloadQuest: []
+        fileTree: {}, //整个目录树
+        account: '', //用户账号
+        uploadQuest: [], // 用户上传任务队列
+        downloadQuest: [] //用户下载任务队列
     },
     mutations: {
         setFileTree(state, payload) {
@@ -34,8 +34,8 @@ export default new Vuex.Store({
         setAccount(state, payload) {
             state.account = payload
         },
-        setDownloadQuest(state, plaload) {
-            state.downloadQuest.push(plaload)
+        setDownloadQuest(state, playload) {
+            state.downloadQuest.push(playload)
         },
         changeDownloadQuest(state, playload) {
             for (let q of state.downloadQuest) {
@@ -48,6 +48,23 @@ export default new Vuex.Store({
             state.downloadQuest.forEach((value, index) => {
                 if (value.id == playload.id) {
                     return state.downloadQuest.splice(index, 1)
+                }
+            })
+        },
+        addUploadQuest(state, playload) {
+            state.uploadQuest.push(playload)
+        },
+        changeUploadQuest(state, playload) {
+            for (let q of state.uploadQuest) {
+                if (q.id == playload.id) {
+                    return q = playload
+                }
+            }
+        },
+        cancelUploadQuest(state, playload) {
+            state.uploadQuest.forEach((value, index) => {
+                if (value.id == playload.id) {
+                    return state.uploadQuest.splice(index, 1)
                 }
             })
         }

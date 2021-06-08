@@ -1,27 +1,27 @@
 <template>
-    <div class="downloadQuest">
-          <div class="downloadQuest-img">
+  <div class="uploadQuest">
+          <div class="uploadQuest-img">
               <img src="~image/fileicon.webp">
           </div>
-          <div class="downloadQuest-exhibition">
-              <div class="downloadQuest-fileName">{{quest.name}}</div>
-              <div class="downloadQuest-progress-wrap">
-                  <div class="downloadQuest-progress" :style="{width: process}"></div>
+          <div class="uploadQuest-exhibition">
+              <div class="uploadQuest-fileName">{{quest.name}}</div>
+              <div class="uploadQuest-progress-wrap">
+                  <div class="uploadQuest-progress" :style="{width: process}"></div>
               </div>
-              <div class="downloadQuest-fileSize">{{loaded}} / {{total}}</div>
+              <div class="uploadQuest-fileSize">{{loaded}} / {{total}}</div>
           </div>
-          <div class="downloadQuest-operation" @click="cancel">取消下载</div>
+          <div class="uploadQuest-operation" @click="cancel">取消上传</div>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'item',
+    name: 'uploaditem',
     props: ['quest'],
     methods: {
         cancel(){
             this.quest.source.cancel()
-            this.$store.commit('deleteDownloadQuest', this.quest)
+            this.$store.commit('cancelUploadQuest', this.quest)
         }
     },
     computed:{
@@ -44,8 +44,8 @@ export default {
 }
 </script>
 
-<style scope="this api replaced by slot-scope in 2.5.0+">
-.downloadQuest{
+<style scope>
+.uploadQuest{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -55,23 +55,23 @@ export default {
     background-color: aqua;
 }
 
-.downloadQuest > div{
+.uploadQuest > div{
     flex-shrink: 0;
 }
 
-.downloadQuest-img{
+.uploadQuest-img{
     width: 50px;
     height: 60px;
     margin-right: 5px;
     overflow: hidden;
 }
 
-.downloadQuest-img img{
+.uploadQuest-img img{
     width: 100%;
     height: 100%;
 }
 
-.downloadQuest-operation{
+.uploadQuest-operation{
     padding: 5px;
     color: white;
     font-weight: 600;
@@ -79,13 +79,14 @@ export default {
     background-color: red;
 }
 
-.downloadQuest-exhibition{
+.uploadQuest-exhibition{
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
-.downloadQuest-fileName{
+.uploadQuest-fileName{
+    width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -94,18 +95,18 @@ export default {
     font-weight: 600;
 }
 
-.downloadQuest-fileSize{
+.uploadQuest-fileSize{
     line-height: 26px;
     font-size: 14px;
 }
 
-.downloadQuest-progress-wrap{
+.uploadQuest-progress-wrap{
     height: 3px;
     background: red;
 }
 
-.downloadQuest-progress{
-    width: 10px;
+.uploadQuest-progress{
+    width: 0px;
     height: 100%;
     background-color: white;
 }

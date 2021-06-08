@@ -1,14 +1,14 @@
-let router = require('express').Router()
-
+const router = require('express').Router()
 const path = require('path')
 const tar = require('tar')
+const fs = require('fs')
 
 const getFileTree = require('../util/getFileTree')
 const database = require('../DataBase/database')
 const accountModel = require('../DataBase/accountSchema')
 const verificationModel = require('../DataBase/verification')
 const sendEmail = require('../util/sendEmail')
-const { createDir, deleteFile } = require('../util/util')
+const { createDir, deleteDir } = require('../util/util')
 
 const TARCWD = path.resolve(__dirname, '../USERDIR') // 用户下载打包文件的目录
 const USERROOTDIR = path.resolve(__dirname, '../USERDIR')
@@ -106,7 +106,7 @@ router.get('/login', (req, res) => {
 // 用户获取目录路由
 router.get('/files', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
-
+    console.log(req.query.account)
     let userDir = path.resolve(__dirname, '../USERDIR', req.query.account)
 
     res.json(getFileTree(0, userDir))
@@ -152,7 +152,7 @@ router.get('/download', (req, res) => {
     res.set({
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/octet-stream',
-        'Content-Disposition': 'attachment;filename=download.tar.gz'
+        'Content-Disposition': 'attachment;filename=download.tgz'
     })
     let { filepaths } = req.query
     tar.c({
@@ -188,7 +188,7 @@ router.get('/createdir', (req, res) => {
 router.get('/deletefile', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
     let { context, filepaths } = req.query
-    deleteFile(filepaths).then(result => {
+    deleteDir(filepaths).then(result => {
         res.send({
             succeed: true,
             files: getFileTree(0, context),
@@ -201,4 +201,11 @@ router.get('/deletefile', (req, res) => {
         })
     })
 })
+
+router.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../../dist/index.html'))
+})
+
+
+
 module.exports = router

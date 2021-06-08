@@ -1,3 +1,4 @@
+const { rejects } = require('assert');
 const fs = require('fs')
 
 
@@ -9,7 +10,7 @@ async function createDir(dir, recursive) {
 
 // 删除文件
 
-async function deleteFile(paths) {
+async function deleteDir(paths) {
     let promise = [];
     for (let p of paths) {
         promise.push(await fs.promises.rmdir(p, { recursive: true }))
@@ -17,5 +18,21 @@ async function deleteFile(paths) {
     return Promise.all(promise)
 }
 
+
+async function deleteFiles(paths) {
+    let promise = []
+
+    for (let path of paths) {
+        promise.push(new Promise((resolve, reject) => {
+            fs.unlink(path, (err, data) => {
+                if (err) reject(err)
+                resolve(data)
+            })
+        }))
+    }
+    return Promise.all(promise)
+}
+
 exports.createDir = createDir
-exports.deleteFile = deleteFile
+exports.deleteFiles = deleteFiles
+exports.deleteDir = deleteDir
