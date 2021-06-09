@@ -15,6 +15,8 @@ let Loading = () =>
     import ('views/main/home/loading')
 let Quest = () =>
     import ('views/quest/index')
+let SelectPath = () =>
+    import ('views/main/home/selectPath')
 
 Vue.use(VueRouter)
 
@@ -54,6 +56,11 @@ const routes = [{
         path: '/quest',
         name: 'Quest',
         component: Quest
+    },
+    {
+        path: '/selectpath',
+        name: 'SelectPath',
+        component: SelectPath
     }
 ]
 

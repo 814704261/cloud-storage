@@ -47,7 +47,7 @@
         <span class="iconfont icon-zhongmingming"></span>
         <span>重命名</span>
       </div>
-      <div>
+      <div @click="remove">
         <span class="iconfont icon-yidong"></span>
         <span>移动</span>
       </div>
@@ -286,10 +286,18 @@ export default {
           throw new Error(err);
         });
     },
+    remove(){   // 文件移动功能
+      this.cancelSelecte()
+      let paths = this.selectedFiles.map(value => {
+        return value.path
+      })
+
+      this.$router.push({name: 'SelectPath', params: {paths, operation: 0}})
+    }
   },
   created() {
-    this.files = this.$store.getters.getFileTree;
-    this.pathDir.push(this.files);
+    this.files = this.$store.getters.getFileTree
+    this.pathDir.push(this.files)
   },
   computed: {
     getFiles() {

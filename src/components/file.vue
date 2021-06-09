@@ -16,7 +16,17 @@
 
 <script>
 export default {
-    props:['file', 'filestyle', 'selecteallstyle'],
+    props: {
+        file: Object,
+        filestyle: {
+            type: Boolean,
+            default: false
+        },
+        selecteallstyle: {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         return {
             sele: false
