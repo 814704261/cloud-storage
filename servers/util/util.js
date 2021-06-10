@@ -1,6 +1,6 @@
 const { rejects } = require('assert');
 const fs = require('fs')
-
+const path = require('path')
 
 // 创建文件夹
 async function createDir(dir, recursive) {
@@ -23,16 +23,25 @@ async function deleteFiles(paths) {
     let promise = []
 
     for (let path of paths) {
-        promise.push(new Promise((resolve, reject) => {
-            fs.unlink(path, (err, data) => {
-                if (err) reject(err)
-                resolve(data)
-            })
-        }))
+        promise.push(fs.promises.unlink(path))
     }
     return Promise.all(promise)
 }
 
+// 移动文件
+async function removes(oldPath, newPath) {
+    let promise = []
+    for (let p of oldPath) {
+        let base = path.parse(p).base
+        let context = path.resolve(newPath, base)
+        promise.push(fs.promises.rename(p, context))
+    }
+    return Promise.all(promise)
+}
+
+
+
 exports.createDir = createDir
 exports.deleteFiles = deleteFiles
 exports.deleteDir = deleteDir
+exports.removes = removes

@@ -3,6 +3,7 @@ const formidable = require('formidable')
 const path = require('path')
 const fs = require('fs')
 const getFileTree = require('../util/getFileTree')
+const { removes } = require('../util/util')
 
 const MAXFILESIZE = 2 * 1024 * 1024 * 1024 //上传文件的大小限制为2G
 
@@ -87,8 +88,26 @@ router.post('/upload', (req, res, next) => {
 router.post('/remove', (req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*")
     res.setHeader("Access-Control-Allow-Methods", "POST")
-    res.send({
-        a: 123
+
+    let form = formidable()
+    form.parse(req, (err, fileld, files) => {
+        let { paths, context } = fileld
+
+        removes(paths, context)
+            .then(result => {
+                res.send({
+                    err: null,
+                    files: getFileTree(0, context),
+                    succeed: true
+                })
+            })
+            .catch(err => {
+                res.send({
+                    err,
+                    files: null,
+                    succeed: false
+                })
+            })
     })
 })
 

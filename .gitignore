@@ -2,7 +2,6 @@
 node_modules
 /dist
 /servers/USERDIR
-/servers/tmp
 
 # local env files
 .env.local

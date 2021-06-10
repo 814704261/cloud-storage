@@ -275,24 +275,29 @@ export default {
         cancelToken: quest.source.token
       })
         .then((result) => {
-          if(result.data.err) return this.popup('哦豁出错了', result.data.err, 2000)
+          if(!result.data.succeed) return this.popup('哦豁出错了', result.data.msg, 4000)
+
           this.popup('靓仔牛逼', '上传完毕', 1000)
           this.files = result.data.files[0]
+          console.log('1')
           this.$store.commit('cancelUploadQuest', quest)
+          console.log('2')
+          console.log(result.data.files[0])
           this.$store.commit('changeFileTree', result.data.files[0])
+          console.log('3')
         })
         .catch((err) => {
           this.popup('报错了大哥', err, 2000)
-          throw new Error(err);
+          throw new Error(err)
         });
     },
     remove(){   // 文件移动功能
-      this.cancelSelecte()
       let paths = this.selectedFiles.map(value => {
         return value.path
       })
 
       this.$router.push({name: 'SelectPath', params: {paths, operation: 0}})
+      this.cancelSelecte()
     }
   },
   created() {

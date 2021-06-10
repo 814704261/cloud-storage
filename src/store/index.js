@@ -15,21 +15,10 @@ export default new Vuex.Store({
             state.fileTree = payload
         },
         changeFileTree(state, payload) {
-
             if (state.fileTree.path == payload.path) {
                 return state.fileTree.children = payload.children
             }
-            bianli(state.fileTree.children)
-
-            function bianli(tree) {
-                for (let files of tree) {
-                    if (files.path == payload.path) {
-                        return files.children = payload.children
-                    } else {
-                        return bianli(files.children)
-                    }
-                }
-            }
+            bianli(state.fileTree.children, payload)
         },
         setAccount(state, payload) {
             state.account = payload
@@ -85,3 +74,14 @@ export default new Vuex.Store({
     actions: {},
     modules: {}
 })
+
+
+function bianli(tree, payload) {
+    for (let files of tree) {
+        if (files.path == payload.path) {
+            return files.children = payload.children
+        } else {
+            return bianli(files.children, payload)
+        }
+    }
+}

@@ -71,12 +71,15 @@ export default {
       }
     },
     remove() {
+      let data = {
+        paths: this.paths,
+        context: this.currentTress.path
+      }
       axios
-        .post("/remove", {
-          paths: 1234,
-        })
+        .post("/remove",data)
         .then((result) => {
-          console.log(result);
+          this.$store.commit('changeFileTree', result.data.files[0])
+          this.$router.replace('/')
         })
         .catch((err) => {
           console.log(err);
