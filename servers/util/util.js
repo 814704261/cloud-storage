@@ -1,6 +1,7 @@
-const { rejects } = require('assert');
 const fs = require('fs')
 const path = require('path')
+const crypto = require('crypto')
+
 
 // 创建文件夹
 async function createDir(dir, recursive) {
@@ -40,6 +41,8 @@ async function removes(oldPath, newPath) {
     }
     return Promise.all(promise)
 }
+
+
 
 
 

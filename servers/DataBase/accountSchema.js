@@ -7,6 +7,10 @@ const accountSchema = mongoose.Schema({
         index: true,
         unique: true
     },
+    space: {
+        type: Number,
+        default: 1
+    },
     createTime: { type: Date, default: Date.now }
 });
 

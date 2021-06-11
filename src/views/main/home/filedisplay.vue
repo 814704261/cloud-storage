@@ -320,10 +320,23 @@ export default {
       this.pathDir.splice(1)
       this.cancelSelecte();
     },
-    shareFile(){
-
+    shareFile(){  // 文件分享功能
+      let paths = []
+      for(let p of this.selectedFiles){
+        paths.push(p.path)
+      }
+      let password = prompt('请输入密码')
+      if(password.trim() == '') return alert('密码不能为空')
+      axios.post('/fileshare', {paths, password})
+      .then(result => {
+        console.log(result.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
     },
-    renameFIle(){
+    renameFIle(){   // 文件重命名功能
+      
       if(this.selectedFiles.length > 1) return
       let name = prompt('输入名字，记得带后缀名')
       if(name.trim == '') return

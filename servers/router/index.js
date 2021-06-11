@@ -4,14 +4,16 @@ const tar = require('tar')
 const fs = require('fs')
 
 const getFileTree = require('../util/getFileTree')
+const { createDir, deleteDir } = require('../util/util')
+const sendEmail = require('../util/sendEmail')
+
 const database = require('../DataBase/database')
 const accountModel = require('../DataBase/accountSchema')
 const verificationModel = require('../DataBase/verification')
-const sendEmail = require('../util/sendEmail')
-const { createDir, deleteDir } = require('../util/util')
 
 const TARCWD = path.resolve(__dirname, '../USERDIR') // 用户下载打包文件的目录
 const USERROOTDIR = path.resolve(__dirname, '../USERDIR')
+
 
 //用户登录路由
 router.get('/login', (req, res) => {

@@ -4,10 +4,12 @@ const path = require('path')
 const fs = require('fs')
 const getFileTree = require('../util/getFileTree')
 const { removes } = require('../util/util')
+const fileShareModel = require('../DataBase/fileshare')
+const crypto = require('crypto')
 
 const MAXFILESIZE = 2 * 1024 * 1024 * 1024 //上传文件的大小限制为2G
 
-
+//上传文件路由
 router.post('/upload', (req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*")
     res.setHeader("Access-Control-Allow-Methods", "POST")
@@ -84,7 +86,7 @@ router.post('/upload', (req, res, next) => {
     })
 })
 
-
+//移动文件路由
 router.post('/remove', (req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*")
     res.setHeader("Access-Control-Allow-Methods", "POST")
@@ -109,6 +111,36 @@ router.post('/remove', (req, res, next) => {
                     succeed: false
                 })
             })
+    })
+})
+
+// 文件分享路由
+router.post('/fileshare', (req, res) => {
+    let form = formidable()
+    form.parse(req, (err, fields, files) => {
+        let { paths, password } = fields
+        console.log(fields)
+        let randomID = crypto.randomBytes(16).toString('hex')
+        fileShareModel.create({
+            guid: randomID,
+            password,
+            files: paths
+        }, (err, doc) => {
+            if (err) {
+                return res.send({
+                    err,
+                    succeed: false,
+                    randomID: null,
+                    password: null
+                })
+            }
+            res.send({
+                err: null,
+                succeed: true,
+                password,
+                randomID
+            })
+        })
     })
 })
 
