@@ -22,7 +22,7 @@ Vue.use(VueRouter)
 
 const routes = [{
         path: '/',
-        name: '',
+        name: 'Main',
         component: Main,
         children: [{
                 path: '',

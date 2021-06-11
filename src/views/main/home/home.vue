@@ -8,20 +8,19 @@
 import axios from "axios";
 export default {
   data() {
-    return {
-      
-    }
+    return {};
   },
   created() {
     console.log("home created");
-    
+
     axios("http://localhost:1234/files", {
       params: {
         account: localStorage.getItem("account"),
       },
     })
       .then((res) => {
-        this.$store.commit("setFileTree", res.data[0]);
+        console.log("这是文件目录树", res.data);
+        this.$store.commit("setFileTree", res.data);
         this.$router.replace({ name: "Filedisplay" });
       })
       .catch((err) => {

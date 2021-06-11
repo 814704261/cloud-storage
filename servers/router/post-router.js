@@ -34,7 +34,7 @@ router.post('/upload', (req, res, next) => {
             return fs.promises.rename(oldpath, newpath)
                 .then(result => {
                     res.send({
-                        files: getFileTree(0, context),
+                        files: getFileTree(context),
                         succeed: true,
                         msg: null
                     })
@@ -60,7 +60,7 @@ router.post('/upload', (req, res, next) => {
         Promise.all(decide)
             .then(result => {
                 res.send({
-                    files: getFileTree(0, context),
+                    files: getFileTree(context),
                     succeed: true,
                     msg: null
                 })
@@ -97,7 +97,7 @@ router.post('/remove', (req, res, next) => {
             .then(result => {
                 res.send({
                     err: null,
-                    files: getFileTree(0, context),
+                    files: getFileTree(context),
                     succeed: true
                 })
             })

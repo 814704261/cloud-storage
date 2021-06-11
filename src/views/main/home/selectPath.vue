@@ -77,7 +77,6 @@ export default {
       axios
         .post("/remove", data)
         .then((result) => {
-          console.log(result.data)
           this.$router.replace("/")
         })
         .catch((err) => {

@@ -35,7 +35,7 @@
         <span>下载</span>
       </div>
       <div>
-        <span class="iconfont icon-fenxiang"></span>
+        <span class="iconfont icon-fenxiang" @click="shareFile"></span>
         <span>分享</span>
       </div>
       <div>
@@ -43,7 +43,7 @@
         <span>删除</span>
       </div>
       <div>
-        <span class="iconfont icon-zhongmingming"></span>
+        <span class="iconfont icon-zhongmingming" @click="renameFIle"></span>
         <span>重命名</span>
       </div>
       <div @click="remove">
@@ -162,8 +162,12 @@ export default {
         })
         .then((result) => {
           this.popup("靓仔牛逼", "创建文件成功");
-          this.files = result.data.files[0];
-          this.$store.commit("changeFileTree", result.data.files[0]);
+          this.files = result.data.files
+          // 更新导航栏
+          this.files = result.data.files
+          this.pathDir.splice(this.pathDir.length -1, 1, result.data.files)
+          // 更新目录树
+          this.$store.commit("changeFileTree", result.data.files)
         })
         .catch((err) => {
           this.popup("卧槽！创建失败了", err);
@@ -178,7 +182,7 @@ export default {
       }
 
       this.cancelSelecte();
-      //this.popup('正在下载','已添加到下载任务', 1000)
+      this.popup('正在下载','已添加到下载任务', 1000)
 
       let quest = {
         source: axios.CancelToken.source(),
@@ -203,7 +207,7 @@ export default {
       })
         .then((result) => {
           that.$store.commit("deleteDownloadQuest", quest);
-
+          that.popup('下载任务完成','卧槽！靓仔牛逼', 1000)
           let a = document.createElement("a");
           a.style.display = "none";
           a.href = URL.createObjectURL(result.data);
@@ -232,9 +236,11 @@ export default {
         .then((result) => {
           this.popup("删除成功", "靓仔牛逼");
           this.cancelSelecte();
-          this.files = result.data.files[0];
-          this.$store.commit("changeFileTree", result.data.files[0]);
-          console.log(this.$store.state.fileTree)
+          // 更新导航栏
+          this.files = result.data.files
+          this.pathDir.splice(this.pathDir.length -1, 1, result.data.files)
+          // 更新目录树
+          this.$store.commit("changeFileTree", result.data.files)
         })
         .catch((err) => {
           this.popup("错误", err);
@@ -262,7 +268,7 @@ export default {
         return this.popup(
           "wo草泥马",
           "想搞坏我的服务器吗，上传文件的总大小不可以超过2G！！！",
-          3000
+          5000
         );
 
       this.popup("靓仔牛逼", "任务正在上传", 1000);
@@ -288,9 +294,13 @@ export default {
           if (!result.data.succeed)
             return this.popup("哦豁出错了", result.data.msg, 4000);
           this.popup("靓仔牛逼", "上传完毕", 1000);
-          this.files = result.data.files[0];
+          this.files = result.data.files
+          // 更新导航栏
+          this.files = result.data.files
+          this.pathDir.splice(this.pathDir.length -1, 1, result.data.files)
+          // 更新目录树
           this.$store.commit("cancelUploadQuest", quest);
-          this.$store.commit("changeFileTree", result.data.files[0]);
+          this.$store.commit("changeFileTree", result.data.files)
         })
         .catch((err) => {
           this.popup("报错了大哥", err, 2000);
@@ -310,18 +320,32 @@ export default {
       this.pathDir.splice(1)
       this.cancelSelecte();
     },
-  },
-  copyFIle(){
-    let paths = this.selectedFiles.map((value) => {
-        return value.path;
-    });
+    shareFile(){
 
-      this.$router.push({
-        name: "SelectPath",
-        params: { paths, operation: 1, context: this.files.path },
-      });
-      this.pathDir.splice(1)
-      this.cancelSelecte();
+    },
+    renameFIle(){
+      if(this.selectedFiles.length > 1) return
+      let name = prompt('输入名字，记得带后缀名')
+      if(name.trim == '') return
+      axios({
+        url: 'http://localhost:1234/rename',
+        method: 'get',
+        params: {
+          name,
+          filePath: this.selectedFiles[0].path,
+          context: this.files.path
+        }
+      }).then(result => {
+        console.log('这是改名的数据',result.data)
+        this.cancelSelecte()
+        this.files = result.data.files
+        this.$store.commit('changeFileTree', result.data.files)
+        this.popup('重命名成功', '牛逼克拉斯', 4000)
+      }).catch(err => {
+        this.cancelSelecte()
+        return this.popup('重命名失败', err, 4000)
+      })
+    },
   },
   created() {
     console.log('filedisplay created')

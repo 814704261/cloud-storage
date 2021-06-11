@@ -103,13 +103,12 @@ router.get('/login', (req, res) => {
         })
 })
 
-// 用户获取目录路由
+// 用户获取目录树路由
 router.get('/files', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
     console.log(req.query.account)
     let userDir = path.resolve(__dirname, '../USERDIR', req.query.account)
-
-    res.json(getFileTree(0, userDir))
+    res.json(getFileTree(userDir))
 })
 
 // 用户获取验证码路由
@@ -170,7 +169,7 @@ router.get('/createdir', (req, res) => {
     createDir(path.resolve(context, name)).then((result) => {
             res.send({
                 succeed: true,
-                files: getFileTree(0, context),
+                files: getFileTree(context),
                 msg: null
             })
         })
@@ -191,7 +190,7 @@ router.get('/deletefile', (req, res) => {
     deleteDir(filepaths).then(result => {
         res.send({
             succeed: true,
-            files: getFileTree(0, context),
+            files: getFileTree(context),
             msg: null
         })
     }).catch(err => {
@@ -202,10 +201,32 @@ router.get('/deletefile', (req, res) => {
     })
 })
 
+// 获取首页
 router.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../../dist/index.html'))
 })
 
+// 文件改名
 
+router.get('/rename', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*')
+    let { filePath, name, context } = req.query
+    fs.rename(filePath, path.resolve(context, name), (err, result) => {
+        if (err) {
+            return res.send({
+                err,
+                succeed: false,
+                files: null
+            })
+        }
+
+        res.send({
+            err: null,
+            succeed: true,
+            files: getFileTree(context)
+        })
+    })
+
+})
 
 module.exports = router

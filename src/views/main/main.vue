@@ -14,7 +14,9 @@ export default {
   },
   methods: {
     skip(url) {
-      this.$router.replace(url);
+      this.$router.replace(url).catch(err => {
+        console.log(err)
+      })
     },
   },
 };
