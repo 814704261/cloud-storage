@@ -1,29 +1,24 @@
 <template>
-    <div>
-        <keep-alive>
-            <router-view/>
-        </keep-alive>
-        <buttom-tab v-on:goto="skip"></buttom-tab>
-    </div>
+  <div>
+    <router-view/>
+    <buttom-tab v-on:goto="skip"></buttom-tab>
+  </div>
 </template>
 
 <script>
-import buttomTab from 'components/buttomTab.vue'
+import buttomTab from "components/buttomTab.vue";
 export default {
-  created() {
-    
-  },
+  created() {},
   components: {
-    buttomTab
+    buttomTab,
   },
   methods: {
-    skip(url){
-      this.$router.replace(url)
-    }
-  }
-}
+    skip(url) {
+      this.$router.replace(url);
+    },
+  },
+};
 </script>
 
 <style>
-
 </style>

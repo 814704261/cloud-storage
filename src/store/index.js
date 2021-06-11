@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        fileTree: {}, //整个目录树
+        fileTree: {}, //整个目录树  对象类型
         account: '', //用户账号
         uploadQuest: [], // 用户上传任务队列
         downloadQuest: [] //用户下载任务队列
@@ -15,10 +15,22 @@ export default new Vuex.Store({
             state.fileTree = payload
         },
         changeFileTree(state, payload) {
+            console.log('fileTree改变')
             if (state.fileTree.path == payload.path) {
-                return state.fileTree.children = payload.children
+                return state.fileTree = payload
             }
-            bianli(state.fileTree.children, payload)
+
+            function recursion(tree) {
+
+                if (tree.path == payload.path) return tree = payload
+
+                tree.children.forEach((value, index) => {
+                    if (value.path == payload.path) return tree.children[index] = payload
+                    if (value.type !== 'file') return recursion(tree.children[index])
+                });
+
+            }
+            return recursion(state.fileTree)
         },
         setAccount(state, payload) {
             state.account = payload
@@ -74,14 +86,3 @@ export default new Vuex.Store({
     actions: {},
     modules: {}
 })
-
-
-function bianli(tree, payload) {
-    for (let files of tree) {
-        if (files.path == payload.path) {
-            return files.children = payload.children
-        } else {
-            return bianli(files.children, payload)
-        }
-    }
-}

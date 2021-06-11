@@ -102,6 +102,7 @@ router.post('/remove', (req, res, next) => {
                 })
             })
             .catch(err => {
+                console.log(err)
                 res.send({
                     err,
                     files: null,

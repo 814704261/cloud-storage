@@ -1,21 +1,20 @@
 <template>
   <div class="filedisplay">
-    <hometitle @createdir="createDir" />
+    <hometitle @createdir="createDir"/>
     <search />
     <ol class="pathBar" ref="pathBar">
-      <path-bar
+      <path-bar 
         :class="{ last: index == pathDir.length - 1 }"
         :file="value"
         v-for="(value, index) of pathDir"
-        :key="index"
+        :key="value.path"
         :index="index"
         @changepath="changepath"
       />
     </ol>
     <files-comp
-      keep-alive
-      v-for="(value, index) of getFiles"
-      :key="index"
+      v-for="(value) of getFiles"
+      :key="value.path"
       :file="value"
       :filestyle="filestyle"
       :selecteallstyle="selecteAllStyle"
@@ -53,7 +52,11 @@
       </div>
     </div>
 
-    <div class="uploadFile" @click.self="selectFile" v-if="selectedFiles.length == 0">
+    <div
+      class="uploadFile"
+      @click.self="selectFile"
+      v-if="selectedFiles.length == 0"
+    >
       <input
         type="file"
         multiple
@@ -183,7 +186,7 @@ export default {
         loaded: 0,
         name: this.files.name + ".tar.gz",
         id: new Date().getTime(),
-      }
+      };
       this.$store.commit("setDownloadQuest", quest);
       let that = this;
       axios("http://localhost:1234/download", {
@@ -231,6 +234,7 @@ export default {
           this.cancelSelecte();
           this.files = result.data.files[0];
           this.$store.commit("changeFileTree", result.data.files[0]);
+          console.log(this.$store.state.fileTree)
         })
         .catch((err) => {
           this.popup("错误", err);
@@ -245,62 +249,82 @@ export default {
       //用户上传文件
       let files = this.$refs.uploadFile.files;
       if (files.length == 0) return;
-      
+
       let formdata = new FormData();
-      let fileSize = 0
-      formdata.append('path', this.files.path)
+      let fileSize = 0;
+      formdata.append("path", this.files.path);
 
-      for(let i = 0; i < files.length; i++){
-        fileSize += files[i].size
-        formdata.append("files", files[i])
+      for (let i = 0; i < files.length; i++) {
+        fileSize += files[i].size;
+        formdata.append("files", files[i]);
       }
-      if(fileSize >= 2 * 1024 * 1024 * 1024) return this.popup('wo草泥马', '想搞坏我的服务器吗，上传文件的总大小不可以超过2G！！！', 3000)
+      if (fileSize >= 2 * 1024 * 1024 * 1024)
+        return this.popup(
+          "wo草泥马",
+          "想搞坏我的服务器吗，上传文件的总大小不可以超过2G！！！",
+          3000
+        );
 
-      this.popup('靓仔牛逼', '任务正在上传', 1000)
+      this.popup("靓仔牛逼", "任务正在上传", 1000);
       let quest = {
         source: axios.CancelToken.source(),
         total: 0,
         loaded: 0,
-        name: files[0].name + '等多个文件',
+        name: files[0].name + "等多个文件",
         id: new Date().getTime(),
-      }
-      this.$store.commit('addUploadQuest', quest)
-      let that = this
-      axios.post('/upload', formdata, {
-        onUploadProgress(progressEvent){
-          quest.total = progressEvent.total,
-          quest.loaded = progressEvent.loaded
-          that.$store.commit('changeUploadQuest', quest)
-        },
-        cancelToken: quest.source.token
-      })
+      };
+      this.$store.commit("addUploadQuest", quest);
+      let that = this;
+      axios
+        .post("/upload", formdata, {
+          onUploadProgress(progressEvent) {
+            (quest.total = progressEvent.total),
+              (quest.loaded = progressEvent.loaded);
+            that.$store.commit("changeUploadQuest", quest);
+          },
+          cancelToken: quest.source.token,
+        })
         .then((result) => {
-          if(!result.data.succeed) return this.popup('哦豁出错了', result.data.msg, 4000)
-
-          this.popup('靓仔牛逼', '上传完毕', 1000)
-          this.files = result.data.files[0]
-          console.log('1')
-          this.$store.commit('cancelUploadQuest', quest)
-          console.log('2')
-          console.log(result.data.files[0])
-          this.$store.commit('changeFileTree', result.data.files[0])
-          console.log('3')
+          if (!result.data.succeed)
+            return this.popup("哦豁出错了", result.data.msg, 4000);
+          this.popup("靓仔牛逼", "上传完毕", 1000);
+          this.files = result.data.files[0];
+          this.$store.commit("cancelUploadQuest", quest);
+          this.$store.commit("changeFileTree", result.data.files[0]);
         })
         .catch((err) => {
-          this.popup('报错了大哥', err, 2000)
-          throw new Error(err)
+          this.popup("报错了大哥", err, 2000);
+          throw new Error(err);
         });
     },
-    remove(){   // 文件移动功能
-      let paths = this.selectedFiles.map(value => {
-        return value.path
-      })
+    remove() {
+      // 文件移动功能
+      let paths = this.selectedFiles.map((value) => {
+        return value.path;
+      });
 
-      this.$router.push({name: 'SelectPath', params: {paths, operation: 0}})
-      this.cancelSelecte()
-    }
+      this.$router.push({
+        name: "SelectPath",
+        params: { paths, operation: 0, context: this.files.path },
+      });
+      this.pathDir.splice(1)
+      this.cancelSelecte();
+    },
+  },
+  copyFIle(){
+    let paths = this.selectedFiles.map((value) => {
+        return value.path;
+    });
+
+      this.$router.push({
+        name: "SelectPath",
+        params: { paths, operation: 1, context: this.files.path },
+      });
+      this.pathDir.splice(1)
+      this.cancelSelecte();
   },
   created() {
+    console.log('filedisplay created')
     this.files = this.$store.getters.getFileTree
     this.pathDir.push(this.files)
   },

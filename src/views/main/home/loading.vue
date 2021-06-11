@@ -1,15 +1,12 @@
 <template>
   <dir>
-      <h1>正在加载</h1>
+    <h1>正在加载</h1>
   </dir>
 </template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>
 
 <style>
-
 </style>

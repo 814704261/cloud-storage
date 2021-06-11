@@ -32,8 +32,10 @@ async function deleteFiles(paths) {
 async function removes(oldPath, newPath) {
     let promise = []
     for (let p of oldPath) {
+        console.log(p)
         let base = path.parse(p).base
         let context = path.resolve(newPath, base)
+        console.log(context)
         promise.push(fs.promises.rename(p, context))
     }
     return Promise.all(promise)

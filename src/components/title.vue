@@ -19,7 +19,7 @@ export default {
             this.$emit('createdir')
         },
         quest(){
-            this.$router.push('/quest')
+            this.$router.push({name: 'Quest'})
         }
     },
 }

@@ -1,24 +1,24 @@
-<template>
+<template :key="selectpath">
   <div class="selectpath">
     <ol class="pathBar">
       <path-bar
         :class="{ last: index == pathDir.length - 1 }"
         :file="value"
         v-for="(value, index) of pathDir"
-        :key="index"
+        :key="value.path"
         :index="index"
         @changepath="changepath"
       />
     </ol>
 
     <files-comp
-      v-for="(value, index) of currentTress.children"
-      :key="index"
+      v-for="value of currentTress.children"
+      :key="value.path"
       :file="value"
       @into="into"
     />
 
-    <div class="selectpath-operation" v-if="show">
+    <div class="selectpath-operation">
       <div class="selectpath-operation-cancel" @click="cancel">
         <span>取消</span>
       </div>
@@ -35,14 +35,13 @@ import pathBar from "components/pathBar";
 import axios from "axios";
 
 export default {
-  name: "SelectPath",
   data() {
     return {
+      context: this.$route.params.context, //传过来的参数，移动文件所在的文件夹路径
       paths: this.$route.params.paths, // 传过来的需要操作的路径
       operation: this.$route.params.operation, // 如果是移动操作,值为0
       currentTress: {}, // 当前目录树
       pathDir: [],
-      show: true, // 用户只能点击一次，无论成功与失败
     };
   },
   methods: {
@@ -55,10 +54,10 @@ export default {
       this.pathDir.splice(data.index + 1);
     },
     cancel() {
-      (this.show = false), this.$router.back();
+      this.$router.back();
     },
     confirm() {
-      this.show = false;
+      if(this.context == this.currentTress.path) return alert('你他妈是傻逼吗，文件就在这个文件夹里面')
       switch (this.operation) {
         case 0:
           this.remove();
@@ -73,23 +72,24 @@ export default {
     remove() {
       let data = {
         paths: this.paths,
-        context: this.currentTress.path
-      }
+        context: this.currentTress.path,
+      };
       axios
-        .post("/remove",data)
+        .post("/remove", data)
         .then((result) => {
-          this.$store.commit('changeFileTree', result.data.files[0])
-          this.$router.replace('/')
+          console.log(result.data)
+          this.$router.replace("/")
         })
         .catch((err) => {
           console.log(err);
-        })
+        });
     },
     copy() {
       console.log("copy");
     },
   },
   created() {
+    console.log('selected created')
     this.currentTress = this.$store.getters.getFileTree;
     this.pathDir.push(this.currentTress);
   },

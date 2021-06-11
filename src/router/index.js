@@ -26,7 +26,7 @@ const routes = [{
         component: Main,
         children: [{
                 path: '',
-                name: '',
+                name: 'Home',
                 component: Home,
                 children: [{
                         path: '',
@@ -53,14 +53,14 @@ const routes = [{
         component: Login
     },
     {
-        path: '/quest',
-        name: 'Quest',
-        component: Quest
-    },
-    {
         path: '/selectpath',
         name: 'SelectPath',
         component: SelectPath
+    },
+    {
+        path: '/quest',
+        name: 'Quest',
+        component: Quest
     }
 ]
 

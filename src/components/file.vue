@@ -43,6 +43,7 @@ export default {
         selecte(){
             this.sele = !this.sele
             this.$emit('selected', this.file)
+            console.log(this.file.path)
         }
     },
     watch:{
