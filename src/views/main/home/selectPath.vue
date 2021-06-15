@@ -80,11 +80,23 @@ export default {
           this.$router.replace("/")
         })
         .catch((err) => {
-          console.log(err);
+          return alert(err)
         });
     },
     copy() {
       console.log("copy");
+      let data = {
+        paths: this.paths,
+        context: this.currentTress.path,
+      }
+      axios.post('/filecopy', data)
+      .then(result => {
+        if(result.data.err) return alert('服务器错误')
+        this.$router.replace("/")
+      })
+      .catch(err => {
+        return alert(err)
+      })
     },
   },
   created() {

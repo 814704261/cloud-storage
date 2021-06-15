@@ -8,6 +8,9 @@
           <div @click="createDir">
               <span class="icon-jia-tianchong iconfont"></span>
           </div>
+          <div @click="shareFile">
+              <span class="icon-icon-test iconfont"></span>
+          </div>
       </div>
   </div>
 </template>
@@ -20,6 +23,9 @@ export default {
         },
         quest(){
             this.$router.push({name: 'Quest'})
+        },
+        shareFile(){
+            this.$router.push({name: 'Verify'})
         }
     },
 }

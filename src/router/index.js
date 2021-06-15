@@ -17,6 +17,10 @@ let Quest = () =>
     import ('views/quest/index')
 let SelectPath = () =>
     import ('views/main/home/selectPath')
+let Verify = () =>
+    import ('views/main/home/verify')
+let Preview = () =>
+    import ('views/main/home/preview')
 
 Vue.use(VueRouter)
 
@@ -61,6 +65,16 @@ const routes = [{
         path: '/quest',
         name: 'Quest',
         component: Quest
+    },
+    {
+        path: '/verify',
+        name: 'Verify',
+        component: Verify
+    },
+    {
+        path: '/preview',
+        name: 'Preview',
+        component: Preview
     }
 ]
 

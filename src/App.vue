@@ -27,7 +27,7 @@ export default {
 
 
 <style>
-  @import url("//at.alicdn.com/t/font_2582268_yv207japuy.css");
+  @import url("//at.alicdn.com/t/font_2582268_y2blrvxlm5p.css");
   @import url("./assets/css/normalize.css");
 
 

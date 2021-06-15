@@ -326,10 +326,23 @@ export default {
         paths.push(p.path)
       }
       let password = prompt('请输入密码')
-      if(password.trim() == '') return alert('密码不能为空')
+      if(password == null || password.trim() == '') return alert('密码不能为空')
       axios.post('/fileshare', {paths, password})
       .then(result => {
-        console.log(result.data)
+        this.cancelSelecte()
+        let {randomID, password} = result.data
+        try {
+          let text = `
+            周少的网盘
+            神秘链接：${randomID}
+            开启密码：${password}
+          `
+          navigator.clipboard.writeText(text).then(result => {
+            alert('分享链接已复制到剪贴板')
+          })
+        } catch (error) {
+          alert(error)
+        }
       })
       .catch(err => {
         console.log(err)

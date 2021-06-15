@@ -4,12 +4,13 @@ const tar = require('tar')
 const fs = require('fs')
 
 const getFileTree = require('../util/getFileTree')
-const { createDir, deleteDir } = require('../util/util')
+const { createDir, deleteDir, detailsFiles } = require('../util/util')
 const sendEmail = require('../util/sendEmail')
 
 const database = require('../DataBase/database')
 const accountModel = require('../DataBase/accountSchema')
 const verificationModel = require('../DataBase/verification')
+const fileShareModel = require('../DataBase/fileshare')
 
 const TARCWD = path.resolve(__dirname, '../USERDIR') // 用户下载打包文件的目录
 const USERROOTDIR = path.resolve(__dirname, '../USERDIR')
@@ -230,5 +231,52 @@ router.get('/rename', (req, res) => {
     })
 
 })
+
+//获取分享文件路由
+router.get('/getshare', (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*')
+
+    let { link: guid, password } = req.query
+    fileShareModel.findOne({
+        guid,
+        password
+    }, (err, data) => {
+        if (err) { // 如果报错就返回错误
+            return res.send({
+                files: null,
+                err,
+                succeed: false,
+                exceed: null
+            })
+        }
+        if (data == null) { // 如果没有找到就返回不成功
+            return res.send({
+                files: null,
+                err: null,
+                succeed: false,
+                exceed: null
+            })
+        }
+        let files = detailsFiles(data.files)
+        if (!files) { // 如果分享的文件中某个文件不存在就当作是过期处理
+            return res.send({
+                files: null,
+                err: null,
+                succeed: false,
+                exceed: true
+            })
+        }
+        res.send({
+            files: files,
+            err: null,
+            succeed: true,
+            exceed: null
+        })
+    })
+})
+
+
+
+
 
 module.exports = router

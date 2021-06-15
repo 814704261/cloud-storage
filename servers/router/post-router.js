@@ -3,7 +3,7 @@ const formidable = require('formidable')
 const path = require('path')
 const fs = require('fs')
 const getFileTree = require('../util/getFileTree')
-const { removes } = require('../util/util')
+const { removes, copyFiles } = require('../util/util')
 const fileShareModel = require('../DataBase/fileshare')
 const crypto = require('crypto')
 
@@ -99,7 +99,6 @@ router.post('/remove', (req, res, next) => {
             .then(result => {
                 res.send({
                     err: null,
-                    files: getFileTree(context),
                     succeed: true
                 })
             })
@@ -107,7 +106,6 @@ router.post('/remove', (req, res, next) => {
                 console.log(err)
                 res.send({
                     err,
-                    files: null,
                     succeed: false
                 })
             })
@@ -120,7 +118,7 @@ router.post('/fileshare', (req, res) => {
     form.parse(req, (err, fields, files) => {
         let { paths, password } = fields
         console.log(fields)
-        let randomID = crypto.randomBytes(16).toString('hex')
+        let randomID = crypto.randomBytes(20).toString('hex')
         fileShareModel.create({
             guid: randomID,
             password,
@@ -144,5 +142,29 @@ router.post('/fileshare', (req, res) => {
     })
 })
 
+// 文件复制功能（保存分享的文件）
+router.post('/filecopy', (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*")
+    res.setHeader("Access-Control-Allow-Methods", "POST")
 
+    let form = formidable()
+    form.parse(req, (err, fileld, files) => {
+        let { paths, context } = fileld
+        copyFiles(paths, context)
+            .then(result => {
+
+                res.send({
+                    succeed: true,
+                    err: null
+                })
+            })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    succeed: false,
+                    err
+                })
+            })
+    })
+})
 module.exports = router
