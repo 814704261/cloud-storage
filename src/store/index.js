@@ -88,8 +88,8 @@ export default new Vuex.Store({
             return tree
         },
         getSpaceAble(state, getters) {
-
-            return recursion(state.fileTree)
+            let totalSpace = state.totalSpace * 1024 * 1024 * 1024
+            return totalSpace - recursion(state.fileTree)
 
             function recursion(tree) {
                 let space = 0

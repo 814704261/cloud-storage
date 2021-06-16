@@ -227,6 +227,7 @@ router.post('/download', (req, res) => {
     let form = formidable()
     form.parse(req, (err, fileld, files) => {
         let { filepaths } = fileld
+        console.log('下载文件路径', filepaths)
 
         let time = new Date()
         LOGSTRAM.write('下载文件：' + '\t' + filepaths + '\t' + time.toString() + '\n')
