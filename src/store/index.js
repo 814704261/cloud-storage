@@ -7,6 +7,8 @@ export default new Vuex.Store({
     state: {
         fileTree: {}, //整个目录树  对象类型
         account: '', //用户账号
+        spaceAble: '', //用户可用空间
+        totalSpace: localStorage.getItem("space"), //用户总空间
         uploadQuest: [], // 用户上传任务队列
         downloadQuest: [] //用户下载任务队列
     },
@@ -68,6 +70,9 @@ export default new Vuex.Store({
                     return state.uploadQuest.splice(index, 1)
                 }
             })
+        },
+        setTotalSpace(state, playload) {
+            state.totalSpace = playload
         }
     },
     getters: {
@@ -81,6 +86,24 @@ export default new Vuex.Store({
             })
             tree.children = children
             return tree
+        },
+        getSpaceAble(state, getters) {
+
+            return recursion(state.fileTree)
+
+            function recursion(tree) {
+                let space = 0
+
+                for (let f of tree.children) {
+                    if (f.type == 'file') {
+                        space += f.size
+                    } else {
+                        return space += recursion(f)
+                    }
+                }
+                return space
+            }
+
         }
     },
     actions: {},

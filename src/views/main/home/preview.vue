@@ -50,20 +50,32 @@ export default {
     pathBar,
   },
   methods: {
-    cancel(){
-      this.$router.back()
+    cancel() {
+      this.$router.back();
     },
-    save(){
-      if(this.selectedFiles.length == 0) return alert('请选择文件')
-      let paths = []
-      for(let p of this.selectedFiles){
-        paths.push(p.path)
+    save() {
+      if (this.selectedFiles.length == 0) return alert("请选择文件");
+      let paths = [];
+      let fileSize = 0;
+      for (let p of this.selectedFiles) {
+        paths.push(p.path);
+        if(p.type = 'file'){
+          fileSize += p.size
+        }else{
+          fileSize += this.recursion(p)
+        }
       }
-      this.$router.replace({name: 'SelectPath', params: {
-        paths,
-        context: null,
-        operation: 1
-      }})
+      console.log('选择的文件大小', fileSize)
+      if(fileSize > this.$store.getters.getSpaceAble) return alert('你的可用空间不足')
+
+      this.$router.replace({
+        name: "SelectPath",
+        params: {
+          paths,
+          context: null,
+          operation: 1,
+        },
+      });
     },
     into(data) {
       // 点击了目录
@@ -85,7 +97,19 @@ export default {
       // 点击了路径导航
       this.files = data.file;
       this.pathDir.splice(data.index + 1);
-    }
+    },
+    recursion(tree) {
+      let space = 0;
+
+      for (let f of tree.children) {
+        if (f.type == "file") {
+          space += f.size;
+        } else {
+          return (space += recursion(f));
+        }
+      }
+      return space;
+    },
   },
   computed: {
     getFiles() {
@@ -95,18 +119,18 @@ export default {
           return 1;
         }
         return -1;
-      })
-    }
+      });
+    },
   },
-  created(){
+  created() {
     let init = {
-      name: 'root',
-      children: this.$route.params.files
-    }
-    this.files = init
-    this.pathDir.push(this.files)
-  }
-}
+      name: "root",
+      children: this.$route.params.files,
+    };
+    this.files = init;
+    this.pathDir.push(this.files);
+  },
+};
 </script>
 
 <style scope>
@@ -124,11 +148,11 @@ export default {
   color: #777 !important;
 }
 
-.preview{
+.preview {
   padding-bottom: 60px;
 }
 
-.preview-tools{
+.preview-tools {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -140,16 +164,16 @@ export default {
   background-color: aqua;
 }
 
-.preview-cancel{
+.preview-cancel {
   border-right: 1px solid rgb(0, 0, 0);
 }
 
-.preview-save{
+.preview-save {
   border-left: 1px solid rgb(0, 0, 0);
 }
 
 .preview-cancel,
-.preview-save{
+.preview-save {
   flex: 1;
   height: 100%;
   line-height: 50px;

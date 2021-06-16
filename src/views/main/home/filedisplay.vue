@@ -1,9 +1,9 @@
 <template>
   <div class="filedisplay">
-    <hometitle @createdir="createDir"/>
+    <hometitle @createdir="createDir" />
     <search />
     <ol class="pathBar" ref="pathBar">
-      <path-bar 
+      <path-bar
         :class="{ last: index == pathDir.length - 1 }"
         :file="value"
         v-for="(value, index) of pathDir"
@@ -13,7 +13,7 @@
       />
     </ol>
     <files-comp
-      v-for="(value) of getFiles"
+      v-for="value of getFiles"
       :key="value.path"
       :file="value"
       :filestyle="filestyle"
@@ -83,6 +83,7 @@ import search from "components/search";
 import popup from "components/popup";
 
 import axios from "axios";
+import http from "@/network/index.js";
 
 export default {
   data() {
@@ -153,8 +154,8 @@ export default {
       let nameDir = window.prompt("输入文件夹名字");
       if (!nameDir || !nameDir.trim()) return;
 
-      axios
-        .get("http://localhost:1234/createdir", {
+      http
+        .get("/createdir", {
           params: {
             context: this.files.path,
             name: nameDir,
@@ -162,12 +163,12 @@ export default {
         })
         .then((result) => {
           this.popup("靓仔牛逼", "创建文件成功");
-          this.files = result.data.files
+          this.files = result.data.files;
           // 更新导航栏
-          this.files = result.data.files
-          this.pathDir.splice(this.pathDir.length -1, 1, result.data.files)
+          this.files = result.data.files;
+          this.pathDir.splice(this.pathDir.length - 1, 1, result.data.files);
           // 更新目录树
-          this.$store.commit("changeFileTree", result.data.files)
+          this.$store.commit("changeFileTree", result.data.files);
         })
         .catch((err) => {
           this.popup("卧槽！创建失败了", err);
@@ -182,7 +183,7 @@ export default {
       }
 
       this.cancelSelecte();
-      this.popup('正在下载','已添加到下载任务', 1000)
+      this.popup("正在下载", "已添加到下载任务", 1000);
 
       let quest = {
         source: axios.CancelToken.source(),
@@ -193,21 +194,24 @@ export default {
       };
       this.$store.commit("setDownloadQuest", quest);
       let that = this;
-      axios("http://localhost:1234/download", {
-        params: {
-          filepaths,
-        },
-        responseType: "blob",
-        cancelToken: quest.source.token,
-        onDownloadProgress(evt) {
-          quest.total = evt.total;
-          quest.loaded = evt.loaded;
-          that.$store.commit("changeDownloadQuest", quest);
-        },
-      })
+
+      http
+        .post(
+          "/download",
+          { filepaths },
+          {
+            responseType: "blob",
+            cancelToken: quest.source.token,
+            onDownloadProgress(evt) {
+              quest.total = evt.total;
+              quest.loaded = evt.loaded;
+              that.$store.commit("changeDownloadQuest", quest);
+            },
+          }
+        )
         .then((result) => {
           that.$store.commit("deleteDownloadQuest", quest);
-          that.popup('下载任务完成','卧槽！靓仔牛逼', 1000)
+          that.popup("下载任务完成", "卧槽！靓仔牛逼", 1000);
           let a = document.createElement("a");
           a.style.display = "none";
           a.href = URL.createObjectURL(result.data);
@@ -227,20 +231,19 @@ export default {
       for (let file of this.selectedFiles) {
         filepaths.push(file.path);
       }
-      axios("http://localhost:1234/deletefile", {
-        params: {
+      http
+        .post("/deletefile", {
           filepaths,
           context: this.files.path,
-        },
-      })
+        })
         .then((result) => {
           this.popup("删除成功", "靓仔牛逼");
           this.cancelSelecte();
           // 更新导航栏
-          this.files = result.data.files
-          this.pathDir.splice(this.pathDir.length -1, 1, result.data.files)
+          this.files = result.data.files;
+          this.pathDir.splice(this.pathDir.length - 1, 1, result.data.files);
           // 更新目录树
-          this.$store.commit("changeFileTree", result.data.files)
+          this.$store.commit("changeFileTree", result.data.files);
         })
         .catch((err) => {
           this.popup("错误", err);
@@ -264,6 +267,8 @@ export default {
         fileSize += files[i].size;
         formdata.append("files", files[i]);
       }
+      if(fileSize > this.$store.getters.getSpaceAble) return this.popup('上传错误','可用空间不足', 3000)
+      
       if (fileSize >= 2 * 1024 * 1024 * 1024)
         return this.popup(
           "wo草泥马",
@@ -281,7 +286,7 @@ export default {
       };
       this.$store.commit("addUploadQuest", quest);
       let that = this;
-      axios
+      http
         .post("/upload", formdata, {
           onUploadProgress(progressEvent) {
             (quest.total = progressEvent.total),
@@ -294,13 +299,13 @@ export default {
           if (!result.data.succeed)
             return this.popup("哦豁出错了", result.data.msg, 4000);
           this.popup("靓仔牛逼", "上传完毕", 1000);
-          this.files = result.data.files
+          this.files = result.data.files;
           // 更新导航栏
-          this.files = result.data.files
-          this.pathDir.splice(this.pathDir.length -1, 1, result.data.files)
+          this.files = result.data.files;
+          this.pathDir.splice(this.pathDir.length - 1, 1, result.data.files);
           // 更新目录树
           this.$store.commit("cancelUploadQuest", quest);
-          this.$store.commit("changeFileTree", result.data.files)
+          this.$store.commit("changeFileTree", result.data.files);
         })
         .catch((err) => {
           this.popup("报错了大哥", err, 2000);
@@ -317,66 +322,71 @@ export default {
         name: "SelectPath",
         params: { paths, operation: 0, context: this.files.path },
       });
-      this.pathDir.splice(1)
+      this.pathDir.splice(1);
       this.cancelSelecte();
     },
-    shareFile(){  // 文件分享功能
-      let paths = []
-      for(let p of this.selectedFiles){
-        paths.push(p.path)
+    shareFile() {
+      // 文件分享功能
+      let paths = [];
+      for (let p of this.selectedFiles) {
+        paths.push(p.path);
       }
-      let password = prompt('请输入密码')
-      if(password == null || password.trim() == '') return alert('密码不能为空')
-      axios.post('/fileshare', {paths, password})
-      .then(result => {
-        this.cancelSelecte()
-        let {randomID, password} = result.data
-        try {
-          let text = `
+      let password = prompt("请输入密码");
+      if (password == null || password.trim() == "")
+        return alert("密码不能为空");
+
+      http
+        .post("/fileshare", { paths, password, shareEmail: localStorage.getItem('account') })
+        .then((result) => {
+          this.cancelSelecte();
+          let { randomID, password } = result.data;
+          try {
+            let text = `
             周少的网盘
             神秘链接：${randomID}
             开启密码：${password}
-          `
-          navigator.clipboard.writeText(text).then(result => {
-            alert('分享链接已复制到剪贴板')
-          })
-        } catch (error) {
-          alert(error)
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
+          `;
+            navigator.clipboard.writeText(text).then((result) => {
+              alert("分享链接已复制到剪贴板");
+            });
+          } catch (error) {
+            alert(error);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
-    renameFIle(){   // 文件重命名功能
-      
-      if(this.selectedFiles.length > 1) return
-      let name = prompt('输入名字，记得带后缀名')
-      if(name.trim == '') return
-      axios({
-        url: 'http://localhost:1234/rename',
-        method: 'get',
-        params: {
-          name,
-          filePath: this.selectedFiles[0].path,
-          context: this.files.path
-        }
-      }).then(result => {
-        console.log('这是改名的数据',result.data)
-        this.cancelSelecte()
-        this.files = result.data.files
-        this.$store.commit('changeFileTree', result.data.files)
-        this.popup('重命名成功', '牛逼克拉斯', 4000)
-      }).catch(err => {
-        this.cancelSelecte()
-        return this.popup('重命名失败', err, 4000)
-      })
+    renameFIle() {
+      // 文件重命名功能
+
+      if (this.selectedFiles.length > 1) return;
+      let name = prompt("输入名字，记得带后缀名");
+      if (name.trim == "") return;
+      http
+        .get("/rename", {
+          params: {
+            name,
+            filePath: this.selectedFiles[0].path,
+            context: this.files.path,
+          },
+        })
+        .then((result) => {
+          this.cancelSelecte();
+          this.files = result.data.files;
+          this.$store.commit("changeFileTree", result.data.files);
+          this.popup("重命名成功", "牛逼克拉斯", 4000);
+        })
+        .catch((err) => {
+          this.cancelSelecte();
+          return this.popup("重命名失败", err, 4000);
+        });
     },
   },
   created() {
-    console.log('filedisplay created')
-    this.files = this.$store.getters.getFileTree
-    this.pathDir.push(this.files)
+    console.log("filedisplay created");
+    this.files = this.$store.getters.getFileTree;
+    this.pathDir.push(this.files);
   },
   computed: {
     getFiles() {

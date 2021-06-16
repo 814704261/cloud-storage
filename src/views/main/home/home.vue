@@ -1,11 +1,14 @@
 <template>
   <div class="home">
+    <keep-alive>
     <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import http from "@/network/index";
+
 export default {
   data() {
     return {};
@@ -13,7 +16,7 @@ export default {
   created() {
     console.log("home created");
 
-    axios("http://localhost:1234/files", {
+    http.get("/files", {
       params: {
         account: localStorage.getItem("account"),
       },

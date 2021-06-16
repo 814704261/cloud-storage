@@ -32,7 +32,8 @@
 <script>
 import filesComp from "components/file";
 import pathBar from "components/pathBar";
-import axios from "axios";
+import http from '@/network/index'
+
 
 export default {
   data() {
@@ -74,7 +75,7 @@ export default {
         paths: this.paths,
         context: this.currentTress.path,
       };
-      axios
+      http
         .post("/remove", data)
         .then((result) => {
           this.$router.replace("/")
@@ -89,7 +90,7 @@ export default {
         paths: this.paths,
         context: this.currentTress.path,
       }
-      axios.post('/filecopy', data)
+      http.post('/filecopy', data)
       .then(result => {
         if(result.data.err) return alert('服务器错误')
         this.$router.replace("/")

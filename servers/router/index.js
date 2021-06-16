@@ -1,10 +1,9 @@
 const router = require('express').Router()
 const path = require('path')
-const tar = require('tar')
 const fs = require('fs')
 
 const getFileTree = require('../util/getFileTree')
-const { createDir, deleteDir, detailsFiles } = require('../util/util')
+const { createDir, detailsFiles } = require('../util/util')
 const sendEmail = require('../util/sendEmail')
 
 const database = require('../DataBase/database')
@@ -12,9 +11,16 @@ const accountModel = require('../DataBase/accountSchema')
 const verificationModel = require('../DataBase/verification')
 const fileShareModel = require('../DataBase/fileshare')
 
-const TARCWD = path.resolve(__dirname, '../USERDIR') // 用户下载打包文件的目录
-const USERROOTDIR = path.resolve(__dirname, '../USERDIR')
+const USERROOTDIR = path.resolve(__dirname, '../USERDIR') //用户文件根目录
+const LOGPATH = path.resolve(__dirname, '../tmp/cloud.log') //日志文件
 
+let LOGSTRAM = fs.createWriteStream(LOGPATH, { flags: 'a+' })
+
+
+// 获取首页
+router.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../../dist/index.html'))
+})
 
 //用户登录路由
 router.get('/login', (req, res) => {
@@ -49,7 +55,8 @@ router.get('/login', (req, res) => {
                     // 不是第一次登录的用户
                     res.send({
                         succeed: true,
-                        msg: null
+                        msg: null,
+                        resolve
                     })
 
                 }, () => {
@@ -72,11 +79,14 @@ router.get('/login', (req, res) => {
                             Promise.all([p1, p2, p3]).then(result => {
                                 res.send({
                                     succeed: true,
-                                    msg: null
+                                    msg: null,
+                                    resolve,
+                                    err: null
                                 })
                             }).catch(err => {
                                 res.send({
                                     succeed: true,
+                                    err,
                                     msg: '服务器错误，请联系开发者'
                                 })
                             })
@@ -90,15 +100,25 @@ router.get('/login', (req, res) => {
                             })
                         })
                 })
+                .finally(() => {
+                    let time = new Date()
+                    LOGSTRAM.write('登录成功：' + account + '\t' + time.toString() + '\n')
+                })
 
         }, () => {
             //邮箱验证不通过，向前端返回错误
+            let time = new Date()
+            LOGSTRAM.write('登录失败：' + account + '\t' + time.toString() + '验证码不通过' + '\n')
+
             res.send({
                 succeed: false,
                 msg: '验证码错误'
             })
         })
         .catch(err => {
+            let time = new Date()
+            LOGSTRAM.write('登录失败：' + account + '\t' + time.toString() + JSON.stringify(err) + '\n')
+
             res.send({
                 succeed: false,
                 msg: '服务器错误'
@@ -109,16 +129,23 @@ router.get('/login', (req, res) => {
 // 用户获取目录树路由
 router.get('/files', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
-    console.log(req.query.account)
-    let userDir = path.resolve(__dirname, '../USERDIR', req.query.account)
+
+    let time = new Date()
+    LOGSTRAM.write('获取目录树：' + req.query.account + '\t' + time.toString() + '\n')
+
+    let userDir = path.resolve(USERROOTDIR, req.query.account)
     res.json(getFileTree(userDir))
 })
 
 // 用户获取验证码路由
 router.get('/getverification', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
+
     let email = req.query.email
     let code = Math.floor(Math.random() * 1000000)
+
+    let time = new Date()
+    LOGSTRAM.write('获取验证码：' + email + '\t' + time.toString() + '\n')
 
     verificationModel.deleteOne({ account: email }, err => {
         if (err) throw new Error(err)
@@ -148,27 +175,16 @@ router.get('/getverification', (req, res) => {
 })
 
 
-//用户下载文件路由
-router.get('/download', (req, res) => {
-
-    res.set({
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/octet-stream',
-        'Content-Disposition': 'attachment;filename=download.tgz'
-    })
-    let { filepaths } = req.query
-    tar.c({
-        gzip: true,
-        cwd: TARCWD
-    }, filepaths).pipe(res)
-})
-
 
 // 用户创建文件夹路由
 router.get('/createdir', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
 
     let { context, name } = req.query
+
+    let time = new Date()
+    LOGSTRAM.write('创建文件夹：' + context + '\t' + name + '\t' + time.toString() + '\n')
+
     createDir(path.resolve(context, name)).then((result) => {
             res.send({
                 succeed: true,
@@ -186,34 +202,15 @@ router.get('/createdir', (req, res) => {
         })
 })
 
-// 用户删除文件路由
-router.get('/deletefile', (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*')
-    let { context, filepaths } = req.query
-    deleteDir(filepaths).then(result => {
-        res.send({
-            succeed: true,
-            files: getFileTree(context),
-            msg: null
-        })
-    }).catch(err => {
-        res.send({
-            succeed: false,
-            msg: err
-        })
-    })
-})
 
-// 获取首页
-router.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../../dist/index.html'))
-})
-
-// 文件改名
-
+// 文件重命名
 router.get('/rename', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
     let { filePath, name, context } = req.query
+
+    let time = new Date()
+    LOGSTRAM.write('文件重命名' + filePath + '\t' + name + '\t' + time.toString() + '\n')
+
     fs.rename(filePath, path.resolve(context, name), (err, result) => {
         if (err) {
             return res.send({
@@ -236,7 +233,11 @@ router.get('/rename', (req, res) => {
 router.get('/getshare', (req, res) => {
     res.set('Access-Control-Allow-Origin', '*')
 
-    let { link: guid, password } = req.query
+    let { link: guid, password, shareEmail } = req.query
+
+    let time = new Date()
+    LOGSTRAM.write('获取分享文件：' + shareEmail + '\t' + 'guid：' + guid + '\t' + time.toString() + '\n')
+
     fileShareModel.findOne({
         guid,
         password

@@ -16,6 +16,7 @@
 
 <script>
 import axios from 'axios'
+import http from '@/network/index'
 
 export default {
     data(){
@@ -27,7 +28,7 @@ export default {
     methods: {
         sure(){
             if(this.link == '' || this.password == '') return alert('不可为空')
-            axios('http://localhost:1234/getshare', {
+            http.get('/getshare', {
                 params: {
                     link: this.link,
                     password: this.password
