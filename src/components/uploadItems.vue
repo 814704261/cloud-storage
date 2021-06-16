@@ -84,6 +84,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow: hidden;
 }
 .uploadQuest-fileName{
     width: 100%;

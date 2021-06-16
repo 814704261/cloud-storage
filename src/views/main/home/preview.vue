@@ -65,7 +65,7 @@ export default {
           fileSize += this.recursion(p)
         }
       }
-      console.log('选择的文件大小', fileSize)
+      
       if(fileSize > this.$store.getters.getSpaceAble) return alert('你的可用空间不足')
 
       this.$router.replace({
