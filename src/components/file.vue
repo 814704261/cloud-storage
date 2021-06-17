@@ -1,8 +1,8 @@
 <template>
   <div :class="{'file': true, 'file-on': sele}" @click="into">
       <div class="fileicon">
-          <img v-if="file.type != 'file'" src="../assets/image/diricon.png">
-          <img v-else src="../assets/image/fileicon.webp">
+          <img v-if="file.type != 'file'" src="/img/diricon.png">
+          <img v-else :src="proviewImg">
       </div>
       <div class="filename">
           <span>{{file.name}}</span>
@@ -52,6 +52,16 @@ export default {
         },
         selecteallstyle(){
             this.sele = true
+        }
+    },
+    computed:{
+        proviewImg(){
+            let reg = /\.(png|jpg|gif|jpeg|webp)$/i;
+            if(reg.test(this.file.ext)){
+                return 'http://localhost:1234/proview-img?path=' + this.file.path
+            }else{
+                return '/img/fileicon.webp'
+            }
         }
     }
 }

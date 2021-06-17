@@ -2,6 +2,8 @@ const router = require('express').Router()
 const path = require('path')
 const fs = require('fs')
 
+
+
 const getFileTree = require('../util/getFileTree')
 const { createDir, detailsFiles } = require('../util/util')
 const sendEmail = require('../util/sendEmail')
@@ -276,8 +278,10 @@ router.get('/getshare', (req, res) => {
     })
 })
 
-
-
+// 用户获取缩略图路由
+router.get('/proview-img', (req, res) => {
+    res.sendFile(req.query.path)
+})
 
 
 module.exports = router
