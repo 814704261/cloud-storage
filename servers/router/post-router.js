@@ -173,7 +173,6 @@ router.post('/filecopy', (req, res) => {
 
         copyFiles(paths, context)
             .then(result => {
-
                 res.send({
                     succeed: true,
                     err: null
