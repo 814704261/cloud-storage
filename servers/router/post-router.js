@@ -19,8 +19,6 @@ let LOGSTRAM = fs.createWriteStream(LOGPATH, { flags: 'a+' })
 
 //上传文件路由
 router.post('/upload', (req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*")
-    res.setHeader("Access-Control-Allow-Methods", "POST")
 
     const form = formidable({
         multiples: true,
@@ -99,8 +97,6 @@ router.post('/upload', (req, res, next) => {
 
 //移动文件路由
 router.post('/remove', (req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*")
-    res.setHeader("Access-Control-Allow-Methods", "POST")
 
     let form = formidable()
     form.parse(req, (err, fileld, files) => {
@@ -161,8 +157,6 @@ router.post('/fileshare', (req, res) => {
 
 // 文件复制功能（保存分享的文件）
 router.post('/filecopy', (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*")
-    res.setHeader("Access-Control-Allow-Methods", "POST")
 
     let form = formidable()
     form.parse(req, (err, fileld, files) => {
@@ -191,7 +185,6 @@ router.post('/filecopy', (req, res) => {
 
 // 用户删除文件路由
 router.post('/deletefile', (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*')
 
     let form = formidable()
     form.parse(req, (err, fileld, files) => {

@@ -2,8 +2,6 @@ const router = require('express').Router()
 const path = require('path')
 const fs = require('fs')
 
-
-
 const getFileTree = require('../util/getFileTree')
 const { createDir, detailsFiles } = require('../util/util')
 const sendEmail = require('../util/sendEmail')
@@ -19,6 +17,8 @@ const LOGPATH = path.resolve(__dirname, '../tmp/cloud.log') //日志文件
 let LOGSTRAM = fs.createWriteStream(LOGPATH, { flags: 'a+' })
 
 
+
+
 // 获取首页
 router.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../../dist/index.html'))
@@ -26,7 +26,6 @@ router.get('/', (req, res) => {
 
 //用户登录路由
 router.get('/login', (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*')
 
     let { account, verification } = req.query
 
@@ -130,7 +129,6 @@ router.get('/login', (req, res) => {
 
 // 用户获取目录树路由
 router.get('/files', (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*')
 
     let time = new Date()
     LOGSTRAM.write('获取目录树：' + req.query.account + '\t' + time.toString() + '\n')
@@ -141,7 +139,6 @@ router.get('/files', (req, res) => {
 
 // 用户获取验证码路由
 router.get('/getverification', (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*')
 
     let email = req.query.email
     let code = Math.floor(Math.random() * 1000000)
@@ -180,7 +177,6 @@ router.get('/getverification', (req, res) => {
 
 // 用户创建文件夹路由
 router.get('/createdir', (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*')
 
     let { context, name } = req.query
 
@@ -207,7 +203,6 @@ router.get('/createdir', (req, res) => {
 
 // 文件重命名
 router.get('/rename', (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*')
     let { filePath, name, context } = req.query
 
     let time = new Date()
@@ -233,7 +228,6 @@ router.get('/rename', (req, res) => {
 
 //获取分享文件路由
 router.get('/getshare', (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*')
 
     let { link: guid, password, shareEmail } = req.query
 

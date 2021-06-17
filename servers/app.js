@@ -4,6 +4,14 @@ const routerGet = require('./router/index')
 const routerPost = require('./router/post-router')
 const path = require('path')
 
+const HOSTNAME = 'localhost'
+
+app.use(
+    function hotlinking(req, res, next) {
+        if (req.hostname != HOSTNAME) return res.send({ rubbish: '草泥马，想什么呢' })
+        next()
+    }
+)
 
 app.use(express.static(path.join(__dirname, '../dist')))
 app.use(routerGet)
