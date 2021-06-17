@@ -152,7 +152,12 @@ export default {
     createDir() {
       // 用户创建文件夹
       let nameDir = window.prompt("输入文件夹名字");
-      if (!nameDir || !nameDir.trim()) return;
+      if (!nameDir || !nameDir.trim())
+        return this.popup("创建失败", "你TM的名字呢！！！", 3000);
+
+      let regexp = /(\.+[\/\\]?)+/gi;
+      if (regexp.test(nameDir))
+        return this.popup("创建失败", "干尼玛的，最好给老子换个名字！", 3000);
 
       http
         .get("/createdir", {
@@ -179,7 +184,7 @@ export default {
       // 下载文件
       let filepaths = [];
       for (let file of this.selectedFiles) {
-        filepaths.push(file.path.split("\\USERDIR\\")[1]);
+        filepaths.push(file.path);
       }
 
       this.cancelSelecte();
@@ -267,8 +272,9 @@ export default {
         fileSize += files[i].size;
         formdata.append("files", files[i]);
       }
-      if(fileSize > this.$store.getters.getSpaceAble) return this.popup('上传错误','可用空间不足', 3000)
-      
+      if (fileSize > this.$store.getters.getSpaceAble)
+        return this.popup("上传错误", "可用空间不足", 3000);
+
       if (fileSize >= 2 * 1024 * 1024 * 1024)
         return this.popup(
           "wo草泥马",
@@ -336,7 +342,11 @@ export default {
         return alert("密码不能为空");
 
       http
-        .post("/fileshare", { paths, password, shareEmail: localStorage.getItem('account') })
+        .post("/fileshare", {
+          paths,
+          password,
+          shareEmail: localStorage.getItem("account"),
+        })
         .then((result) => {
           this.cancelSelecte();
           let { randomID, password } = result.data;
@@ -346,15 +356,31 @@ export default {
             神秘链接：${randomID}
             开启密码：${password}
           `;
-            navigator.clipboard.writeText(text).then((result) => {
-              alert("分享链接已复制到剪贴板");
-            });
+            if (navigator.clipboard) {
+              return navigator.clipboard
+                .writeText(text)
+                .then((result) => {
+                  this.popup("分享成功", "链接已复制到剪贴板", 3000);
+                })
+                .catch((err) => {
+                  this.popup("分享失败", JSON.stringify(err), 3000);
+                });
+            }
+
+            let inputElement = document.createElement("input");
+            inputElement.value = text;
+
+            document.body.append(inputElement);
+            inputElement.select();
+            document.execCommand("copy");
+            document.body.removeChild(inputElement);
+            this.popup("分享成功", "链接已复制到剪贴板", 3000);
           } catch (error) {
-            alert(error);
+            this.popup("分享失败", JSON.stringify(error), 3000);
           }
         })
         .catch((err) => {
-          console.log(err);
+          this.popup("分享失败", JSON.stringify(err), 3000);
         });
     },
     renameFIle() {
@@ -363,6 +389,7 @@ export default {
       if (this.selectedFiles.length > 1) return;
       let name = prompt("输入名字，记得带后缀名");
       if (name.trim == "") return;
+
       http
         .get("/rename", {
           params: {
@@ -373,6 +400,14 @@ export default {
         })
         .then((result) => {
           this.cancelSelecte();
+          let data = result.data;
+          if (data.err) {
+            return this.popup(
+              "重命名失败",
+              "你小子太垃圾了" + "</br>" + JSON.stringify(data.err),
+              4000
+            );
+          }
           this.files = result.data.files;
           this.$store.commit("changeFileTree", result.data.files);
           this.popup("重命名成功", "牛逼克拉斯", 4000);

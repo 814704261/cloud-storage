@@ -106,6 +106,7 @@ export default {
     -webkit-box-orient: vertical;
     font-weight: 600;
     font-size: 18px;
+    word-break: break-all;
 }
 
 .filename span:nth-child(2){

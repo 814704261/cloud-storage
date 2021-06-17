@@ -1,8 +1,6 @@
 <template>
   <div class="home">
-    <keep-alive>
     <router-view></router-view>
-    </keep-alive>
   </div>
 </template>
 
@@ -22,7 +20,6 @@ export default {
       },
     })
       .then((res) => {
-        console.log("这是文件目录树", res.data);
         this.$store.commit("setFileTree", res.data);
         this.$router.replace({ name: "Filedisplay" });
       })

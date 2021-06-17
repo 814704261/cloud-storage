@@ -64,6 +64,8 @@ export default {
 }
 .popup-content-text{
     padding: 15px;
+    overflow: hidden;
+    word-break: break-all;
 }
 
 @keyframes showPopup {

@@ -133,7 +133,7 @@ router.post('/fileshare', (req, res) => {
         let { paths, password } = fields
 
         let time = new Date()
-        LOGSTRAM.write('文件分享' + '\t' + paths + '\t' + password + time.toString() + '\n')
+        LOGSTRAM.write('文件分享' + '\t' + paths + '\t' + password + '\t' + time.toString() + '\n')
 
         let randomID = crypto.randomBytes(30).toString('hex')
         fileShareModel.create({
@@ -228,6 +228,10 @@ router.post('/download', (req, res) => {
     form.parse(req, (err, fileld, files) => {
         let { filepaths } = fileld
         console.log('下载文件路径', filepaths)
+        let pathArray = []
+        for (let p of filepaths) {
+            pathArray.push(p.split('USERDIR' + path.sep)[1])
+        }
 
         let time = new Date()
         LOGSTRAM.write('下载文件：' + '\t' + filepaths + '\t' + time.toString() + '\n')
@@ -235,7 +239,7 @@ router.post('/download', (req, res) => {
         tar.c({
             gzip: true,
             cwd: TARCWD
-        }, filepaths).pipe(res)
+        }, pathArray).pipe(res)
     })
 
 })

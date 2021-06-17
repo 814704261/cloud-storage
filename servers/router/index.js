@@ -209,7 +209,7 @@ router.get('/rename', (req, res) => {
     let { filePath, name, context } = req.query
 
     let time = new Date()
-    LOGSTRAM.write('文件重命名' + filePath + '\t' + name + '\t' + time.toString() + '\n')
+    LOGSTRAM.write('文件重命名：' + filePath + '\t' + name + '\t' + time.toString() + '\n')
 
     fs.rename(filePath, path.resolve(context, name), (err, result) => {
         if (err) {
