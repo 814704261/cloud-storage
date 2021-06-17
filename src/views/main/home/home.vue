@@ -20,8 +20,14 @@ export default {
       },
     })
       .then((res) => {
-        this.$store.commit("setFileTree", res.data);
-        this.$router.replace({ name: "Filedisplay" });
+        if(res.data.succeed){
+          this.$store.commit("setFileTree", res.data.files);
+          this.$router.replace({ name: "Filedisplay" });
+        }else{
+          localStorage.clear()
+          this.$router.replace({ name: "Login" })
+        }
+        
       })
       .catch((err) => {
         throw new Error(err);

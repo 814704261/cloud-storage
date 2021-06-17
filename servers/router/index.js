@@ -129,12 +129,27 @@ router.get('/login', (req, res) => {
 
 // 用户获取目录树路由
 router.get('/files', (req, res) => {
-
     let time = new Date()
     LOGSTRAM.write('获取目录树：' + req.query.account + '\t' + time.toString() + '\n')
 
     let userDir = path.resolve(USERROOTDIR, req.query.account)
-    res.json(getFileTree(userDir))
+    if (fs.existsSync(userDir)) {
+        return res.json({
+            files: getFileTree(userDir),
+            err: null,
+            succeed: true
+        })
+    }
+    accountModel.deleteOne({ account: req.query.account }, (err, doc) => {
+        if (err) throw new Error(err)
+        res.json({
+            files: null,
+            err: '账号目录不存在',
+            succeed: false
+        })
+    })
+
+
 })
 
 // 用户获取验证码路由
