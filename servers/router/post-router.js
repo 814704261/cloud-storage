@@ -226,7 +226,6 @@ router.post('/download', (req, res) => {
     let form = formidable()
     form.parse(req, (err, fileld, files) => {
         let { filepaths } = fileld
-        console.log('下载文件路径', filepaths)
         let pathArray = []
         for (let p of filepaths) {
             pathArray.push(p.split('USERDIR' + path.sep)[1])
