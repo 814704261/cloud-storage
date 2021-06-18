@@ -2,7 +2,7 @@
   <div :class="{'file': true, 'file-on': sele}" @click="into">
       <div class="fileicon">
           <img v-if="file.type != 'file'" src="/img/diricon.png">
-          <img v-else :src="proviewImg">
+          <img v-else v-lazy="proviewImg">
       </div>
       <div class="filename">
           <span>{{file.name}}</span>
