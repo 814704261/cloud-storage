@@ -10,6 +10,8 @@ const database = require('../DataBase/database')
 const accountModel = require('../DataBase/accountSchema')
 const verificationModel = require('../DataBase/verification')
 const fileShareModel = require('../DataBase/fileshare')
+const { resolve } = require('path')
+const { reject } = require('core-js/es6/promise')
 
 const USERROOTDIR = path.resolve(__dirname, '../USERDIR') //用户文件根目录
 const LOGPATH = path.resolve(__dirname, '../tmp/cloud.log') //日志文件
@@ -133,6 +135,16 @@ router.get('/files', (req, res) => {
     LOGSTRAM.write('获取目录树：' + req.query.account + '\t' + time.toString() + '\n')
 
     let userDir = path.resolve(USERROOTDIR, req.query.account)
+
+    let reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+    if (!reg.test(req.query.account)) {
+        return res.json({
+            files: null,
+            err: '账号目录不存在',
+            succeed: false
+        })
+    }
+
     if (fs.existsSync(userDir)) {
         return res.json({
             files: getFileTree(userDir),
@@ -140,6 +152,7 @@ router.get('/files', (req, res) => {
             succeed: true
         })
     }
+
     accountModel.deleteOne({ account: req.query.account }, (err, doc) => {
         if (err) throw new Error(err)
         res.json({
