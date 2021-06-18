@@ -10,8 +10,6 @@ const database = require('../DataBase/database')
 const accountModel = require('../DataBase/accountSchema')
 const verificationModel = require('../DataBase/verification')
 const fileShareModel = require('../DataBase/fileshare')
-const { resolve } = require('path')
-const { reject } = require('core-js/es6/promise')
 
 const USERROOTDIR = path.resolve(__dirname, '../USERDIR') //用户文件根目录
 const LOGPATH = path.resolve(__dirname, '../tmp/cloud.log') //日志文件
