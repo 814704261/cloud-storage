@@ -21,6 +21,8 @@ let Verify = () =>
     import ('views/main/home/verify')
 let Preview = () =>
     import ('views/main/home/preview')
+let PreviewImg = () => import('components/previewImage')
+
 
 Vue.use(VueRouter)
 
@@ -75,6 +77,11 @@ const routes = [{
         path: '/preview',
         name: 'Preview',
         component: Preview
+    },
+    {
+        path: '/previewImg',
+        name: 'PreviewImg',
+        component: PreviewImg
     }
 ]
 

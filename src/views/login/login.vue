@@ -109,6 +109,8 @@ export default {
         });
     },
   },
+  components:{
+  }
 };
 </script>
 

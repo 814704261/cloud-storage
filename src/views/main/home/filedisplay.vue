@@ -51,7 +51,7 @@
         <span>移动</span>
       </div>
     </div>
-
+    
     <div
       class="uploadFile"
       @click.self="selectFile"
@@ -81,6 +81,8 @@ import pathBar from "components/pathBar";
 import hometitle from "components/title";
 import search from "components/search";
 import popup from "components/popup";
+
+
 
 import axios from "axios";
 import http from "@/network/index.js";
